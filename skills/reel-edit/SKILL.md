@@ -51,6 +51,18 @@ download fails tell the user to drop the bed in by hand (don't loop on retries).
 7. **Save what worked:** offer to store the reel as a reference in `reel-library/reel-ideas/` and any new look as a new
    numbered style (`/editing-style:add-idea`).
 
+## Sound (never miss a cue)
+After `motion.html` is built, ALWAYS run `python3 -I $SK/scripts/sfx_cues.py motion.html`: it lists every moment that
+needs a sound — a **whoosh** on every page cut, a **popup** on every card / screenshot / tile that pops, blurs or zooms
+in, a **tick** on every pill / label / bubble, **typing** under typed text, a **highlight** sound on every highlighter
+sweep, a **hit** on count-ups landing — with the Edits catalogue sound id and volume.
+- **Edits:** `addSoundEffect {effect:<id>}` for each cue (they land anywhere) → `move` to the cue time → `setVolume`
+  (typing: `trim` to the cue duration). Then re-read `elements` and check every cue has its sound.
+- **Local:** `local_render.sh … [music] [vol] reel-library/sfx` mixes them from the user's sfx folder.
+- Gate 2 adds: every cue from `sfx_cues.py` has its sound; sounds sit under the voice (popup 0.5, tick 0.4, whoosh 0.6).
+- Music for anything public (GitHub, ads, client work) must be royalty-free; Edits "licensed" tracks are for
+  Instagram only. Check the track's licence (`listMusicTracks … license`) before exporting.
+
 ## Motion system (templates/)
 - `split.html` + `components.css` + `engine.js`: the v2 system. `reel_lib.assemble()` copies the css/js next to `motion.html`.
 - `paper.html` (v3): **the house paper style**, now on the shared `components.css` + `engine.js` (same layout as v2;

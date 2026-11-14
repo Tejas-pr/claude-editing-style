@@ -65,50 +65,72 @@ that contains a phrase — and tells you where the phrase is so the highlighter 
 
 ---
 
-## Install
+## One-time setup (about 10 minutes)
 
-**Requirements:** [Claude Code](https://docs.claude.com/en/docs/claude-code), macOS (recommended, with the Edits app) or Linux, **Node 22+**, **Python 3**,
-**ffmpeg**, **Google Chrome** (headless rendering). Optional: [whisper.cpp](https://github.com/ggml-org/whisper.cpp)
-(`whisper-cli` + a ggml model) for local word timing; the **Edits** app with its MCP server for in-app assembly.
+Do this once per computer. After that, every edit is one line.
+
+**1. Install the tools** (macOS with [Homebrew](https://brew.sh); Linux: use your package manager)
 
 ```bash
 brew install node python ffmpeg whisper-cpp
 ```
 
-In Claude Code:
+You also need **Google Chrome** (used headless to render the motion pages) and
+[Claude Code](https://docs.claude.com/en/docs/claude-code).
+
+**2. Install the plugin** (in Claude Code)
 
 ```
 /plugin marketplace add Tejas-pr/claude-editing-style
 /plugin install editing-style@claude-editing-style
 ```
 
-Restart Claude Code (or run `/reload-plugins` if your version has it), then in your video project folder:
+Restart Claude Code.
+
+**3. Recommended: the companion skill pack for the Instagram side**
+
+[instagram-agent-skill](https://github.com/Jakeschincariol/instagram-agent-skill) (MIT) writes the *words*: Reels off
+26 scored hook formulas, captions, a humanizer, viral research. This plugin does the *editing*. They work well together:
+write the script with `/ig-reel`, then edit it with `/editing-style:edit`.
 
 ```
-/editing-style:setup
+/plugin marketplace add Jakeschincariol/instagram-agent-skill
+/plugin install instagram-agent
 ```
 
-This copies the starter library into `./reel-library/`, adds your videos to `.gitignore`, checks the tools, and asks
-for your brand basics (handle, accent colour, default ask, SFX/music folders).
-
-### Which way to render?
+**4. Pick how you'll render**
 
 | your computer | best path |
 |---|---|
-| **macOS** | **Use the Edits app** — it makes the whole process simple: Claude cuts, places the motion, adds music and sound effects from the Edits library, and exports in the app. Connect it once (below). |
-| macOS without Edits, **Linux** | **Local render** — headless Chrome + ffmpeg (+ whisper.cpp for word timing). Same styles, same quality; add your own music file. |
-| **Windows** | Not supported yet (the scripts use zsh and macOS/Linux paths). Support for more systems will be added as they're tested — watch the repo or open an issue. |
+| **macOS** | **Use the Edits app** — it makes the whole process simple: Claude cuts, places the motion, adds music and sound effects from the Edits library, and exports in the app. Connect it once (step 5). |
+| macOS without Edits, **Linux** | **Local render** — headless Chrome + ffmpeg (+ whisper.cpp for word timing). Same styles; you add your own music and sound files (step 7). |
+| **Windows** | Not supported yet (the scripts use zsh). Support for more systems will be added as they're tested — watch the repo or open an issue. |
 
-### Connect the Edits app (macOS)
-
-If you use the Edits app and it exposes an MCP server, add it once (use the URL and token your app shows):
+**5. macOS: connect the Edits app** (use the URL and token your Edits app shows)
 
 ```bash
 claude mcp add --transport http --scope user metapilot-native http://127.0.0.1:19501/mcp --header "Authorization: Bearer <YOUR_TOKEN>"
 ```
 
-Then open Edits and run `/mcp` in Claude Code to confirm `metapilot-native` is connected. **Never commit your token.**
-Without Edits, everything renders locally.
+Open Edits, then run `/mcp` in Claude Code and check `metapilot-native` is connected. **Never commit your token.**
+
+**6. Set up your project** (in the folder where you keep your videos)
+
+```
+/editing-style:setup
+```
+
+It creates `./reel-library/` (your styles, captions, scripts, ideas, sounds), `./reels/` (one folder per video), adds
+your videos to `.gitignore`, checks every tool above and asks for your brand basics.
+
+**7. Local render only: add your sound effects** to `./reel-library/sfx/` — `whoosh.mp3`, `popup.mp3`, `tick.mp3`,
+`typing.mp3`, `highlight.mp3`, `hit.mp3` ([what each one is for](skills/reel-edit/library-seed/sfx/README.md)).
+Use sounds you have the rights to (your own, or CC0 / royalty-free packs). Edits users can skip this.
+
+**8. Optional: a speech model for local word timing** — download a whisper.cpp model (e.g. `ggml-small.en.bin`) and
+`export WHISPER_MODEL=/path/to/ggml-small.en.bin` in your shell profile.
+
+That's it. Now: `/editing-style:edit my-video.mov folio silk`.
 
 ---
 
@@ -163,10 +185,31 @@ and an honest **SHIP / FIX FIRST / RE-RECORD** verdict.
 S=~/.claude/plugins/…/skills/reel-edit           # the plugin's skill folder (Claude knows it)
 python3 -I $S/scripts/local_cut.py raw.mov reels/my-reel --speed 1.15 --model ~/models/ggml-small.en.bin
 # … Claude writes reels/my-reel/build.py → motion.html …
-zsh $S/scripts/local_render.sh reels/my-reel/motion.html reels/my-reel/face-cut.mp4 reels/my-reel/final.mp4 [music.mp3]
+python3 -I $S/scripts/sfx_cues.py reels/my-reel/motion.html        # every sound moment, listed
+zsh $S/scripts/local_render.sh reels/my-reel/motion.html reels/my-reel/face-cut.mp4 reels/my-reel/final.mp4 music.mp3 0.12 reel-library/sfx
+# 16:9: prefix with W=3840 H=2160
 ```
 
 ---
+
+## Sound effects on every moment
+
+Every reel gets a sound on **every** moment that needs one — nothing is missed. `sfx_cues.py` reads the motion page
+and lists each cue:
+
+| moment | sound (Edits catalogue) | your file (local) |
+|---|---|---|
+| page cut | Whoosh (sharp) | `whoosh.mp3` |
+| a card, screenshot or tile pops in | Popup (cute) | `popup.mp3` |
+| a pill, label or bubble appears | Notification (pop-up) | `tick.mp3` |
+| text being typed | Typing (fast) 2 | `typing.mp3` |
+| a highlighter sweep | Notification (pop-up) | `highlight.mp3` |
+| a number lands / hard cut on the payoff | Pop | `hit.mp3` |
+
+In **Edits**, Claude adds them from the app's catalogue. **Locally**, `local_render.sh` mixes them from
+`reel-library/sfx/` together with your voice and a ducked music bed. **Why no sound files in this repo?** Sound packs
+are small, but most aren't licensed for redistribution; you bring your own (or use Edits), so your videos stay clean.
+**Music for public videos must be royalty-free** — Edits "licensed" tracks are for Instagram only.
 
 ## Updates: new styles keep coming
 

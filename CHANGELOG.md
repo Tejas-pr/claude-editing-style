@@ -3,6 +3,13 @@
 New styles land here first. Update with `claude plugin marketplace update claude-editing-style` and
 `claude plugin update editing-style@claude-editing-style`, then run `/editing-style:update` in your project.
 
+## 1.2.0 — 2026-11-15
+- **Sound on every moment:** `sfx_cues.py` reads the motion page and lists every cue (page cuts, popups, pills,
+  typing, highlights, count hits) with the matching Edits catalogue sound; local renders mix your `reel-library/sfx/`
+  files automatically (`local_render.sh … [music] [vol] [sfx_dir]`). Voice + ducked music + SFX in one pass.
+- One-time setup guide in the README; companion skill recommendation (instagram-agent-skill, MIT).
+- README demo now has full sound (Edits catalogue SFX).
+
 ## 1.1.0 — 2026-11-15
 - Every style has a name and its own command: **Duet** (style-01), **Ink** (style-02), **Glow** (style-03),
   **Folio** (style-04, default), **Echo** (style-05). Caption styles: **Velvet**, **Volt**, **Silk**, **Heritage**,
