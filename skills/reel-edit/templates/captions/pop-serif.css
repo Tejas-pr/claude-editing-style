@@ -1,0 +1,21 @@
+/* Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) */
+/* Caption style "pop-serif" (STYLE 3, added 2026-11-15 from the @hilzuckerman reel DfWHPChtG_d; see ref/README.md).
+   Poppins Bold (OFL, Google Fonts), white, tight tracking, soft shadow, NO band and NO outline; one word at a time
+   at chest height. The keyword (word* in data-words) switches font: Instrument Serif ITALIC in butter yellow, a bit
+   bigger. Warm, personal, "creator talking to you" look. Made for the story edit style (story.html), works on split too.
+   Sizes: smaller 7.2rem · default 8.4rem · bigger 9.6rem (set --capsize per reel). */
+:root{--capfont:Poppins,Inter,sans-serif;--capw:700;--capsize:8.4rem;--capls:-.035em;--capcase:none;--capstroke:0;
+  --kw:#f3dd8b;--kwfont:'Instrument Serif',Georgia,serif}
+.seam .chunk{-webkit-text-stroke:0;text-shadow:0 .25rem 1.4rem rgba(0,0,0,.55),0 0 .35rem rgba(0,0,0,.35)}
+.seam .k{font-family:var(--kwfont);font-style:italic;font-weight:400;font-size:1.22em;letter-spacing:-.005em;color:var(--kw)}
+/* on light paper pages (split .full) the white word would vanish: ink words, rust keyword */
+.scene.full .seam .chunk{color:var(--ink);text-shadow:none}
+.scene.full .seam .k{color:var(--rust)}
+/* ---- on PAPER pages (paper.html headline): the "small part" of the Hil look, matched to striver.tech ----
+   l1 = Poppins 600 ink (the small setup line); l2 = Instrument Serif ITALIC, big and light (striver's italic), with the
+   keyword (word* in data-words) in the accent colour. Set --kwc per reel (blue default; red for bad news, green for good). */
+:root{--kwc:#2747b8}
+.l1{font-family:Poppins,Inter,sans-serif;font-weight:600;letter-spacing:-.03em;font-size:4.6rem}
+.l2{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-style:italic;letter-spacing:-.012em;font-size:12rem;line-height:.98;margin-top:-1.6rem}
+.l1 .k,.l2 .k{color:var(--kwc)}
+.roll.serif{font-family:'Instrument Serif',Georgia,serif}

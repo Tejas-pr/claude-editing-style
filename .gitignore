@@ -1,0 +1,32 @@
+# Your own work never goes into this repo: videos, renders, scripts, screenshots, your library and reels.
+reels/
+reel-library/
+footage/
+renders/
+*.mp4
+*.mov
+*.m4v
+*.mkv
+*.webm
+*.wav
+*.aiff
+*.mp3
+*.m4a
+*.aac
+*.ggml
+*.bin
+build.py
+motion.html
+sheet.png
+face-cut.mp4
+words.json
+map.json
+PLAN*.json
+CREDITS.md
+!skills/reel-edit/library-seed/**
+# tooling
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+.env

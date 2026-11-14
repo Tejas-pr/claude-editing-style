@@ -1,0 +1,21 @@
+{
+  "name": "editing-style",
+  "version": "1.0.0",
+  "description": "Numbered video styles, caption styles and script styles for short vertical videos (Reels/Shorts/TikTok), a persistent idea library you train with /build, and an editor that asks which style to use, then assembles in the Edits app or renders locally.",
+  "author": {
+    "name": "Tejas",
+    "url": "https://github.com/Tejas-pr"
+  },
+  "homepage": "https://github.com/Tejas-pr/claude-editing-style",
+  "repository": "https://github.com/Tejas-pr/claude-editing-style",
+  "license": "Apache-2.0",
+  "keywords": [
+    "reels",
+    "shorts",
+    "video",
+    "editing",
+    "captions",
+    "motion-graphics",
+    "instagram"
+  ]
+}

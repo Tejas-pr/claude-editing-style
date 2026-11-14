@@ -1,0 +1,10 @@
+/* Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) */
+/* Caption style "serif-band" (HOUSE DEFAULT since 2026-11-14). Instrument Serif (OFL, Google Fonts) on a soft dark
+   rounded band; the keyword (word* in data-words) is yellow italic. Classy/editorial, readable on any footage.
+   Approved 2026-11-14. Preview: styles/captions.png */
+:root{--capfont:'Instrument Serif',Georgia,serif;--capw:400;--capsize:11rem;--capls:-.01em;--capcase:none;--kw:#ffc21a}
+.seam .chunk{-webkit-text-stroke:0;text-shadow:none;background:rgba(14,12,10,.78);padding:.6rem 3rem 1.6rem;border-radius:2.2rem;
+  box-shadow:0 1rem 3rem rgba(0,0,0,.25);backdrop-filter:blur(.6rem)}
+.seam .k{font-style:italic;color:var(--kw)}
+.scene.full .seam .chunk{background:rgba(14,12,10,.86);color:#fff}
+.scene.full .seam .k{color:var(--kw)}

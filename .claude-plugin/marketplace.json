@@ -1,0 +1,17 @@
+{
+  "name": "claude-editing-style",
+  "owner": {
+    "name": "Tejas",
+    "url": "https://github.com/Tejas-pr"
+  },
+  "metadata": {
+    "description": "Reel editing styles for Claude Code, by Tejas"
+  },
+  "plugins": [
+    {
+      "name": "editing-style",
+      "source": "./",
+      "description": "Numbered reel styles + a trainable idea library + Edits/local rendering. By Tejas (github.com/Tejas-pr)."
+    }
+  ]
+}

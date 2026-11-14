@@ -1,0 +1,189 @@
+<!doctype html>
+<!-- Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reel motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Poppins:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&family=Caveat:wght@700&display=block" rel="stylesheet">
+<link rel="stylesheet" href="components.css">
+<!--
+  reel-edit "paper" motion template v3 (2026-11-15): HOUSE STYLE. The look of @striver.tech (DfuMZKhBky9): warm grid
+  paper, a small sans line + a big italic line at the top, real screenshots (tweets, IG posts, articles) on white cards
+  with highlighter sweeps, name labels, date pills, counts. v3 adds the SMOOTH MOTION of @motionthekx (DctTp5ay2Pa):
+  blur-in entries, words rising out of a blur, blur dissolves between pages, slow drift, eased camera pushes (data-cam),
+  the word roller (.roll). Engine + shared components: engine.js + components.css (reel_lib.assemble copies them).
+  Captions: assemble(..., captions="pop-serif") = Poppins line + Instrument Serif italic line, keyword* in --kwc;
+  captions="classic" = the v2 look (Inter + Playfair bold italic). Copy to b-rools/<topic>/ and edit only SCENES.
+  ALL TIMES ARE TIMELINE SECONDS of the finished (cut + 1.25x) Edits timeline, taken from generateCaptions word times.
+  Elements:
+    .scene data-in data-out ................ a page; shown only between in and out
+    any element data-in [data-anim=pop|rise|fade|slide|drop|none] [data-dur] [data-out] ... animated entry
+    .l1 data-words="1.20 In|1.42 one|..." .. sans line 1, words appear as spoken
+    .l2 data-words="..." ................... bold italic serif line 2, words ghost in, then go solid
+    mark data-t ............................ yellow highlighter sweep
+    .count data-t data-dur data-from data-to [data-dec] [data-pre] [data-suf] ... number count-up
+    .bar data-t data-pct style="--c:#3f8a55" ... growing progress bar (label inside <span>, value in <em>)
+    .dots data-t data-dur data-n data-cols . grid that fills up (e.g. "1,000 agents")
+    video data-src data-in [data-from] ..... B-roll video inside a card, seeked frame-exact
+    .polaroid > .hole ...................... where the creator shows through (transparent in --alpha renders)
+    v3: .shotcard > img + .hlbox[data-t] (real screenshot + highlighter) · .tagline · .datepill · .roll[data-ts]
+        .scene[data-cam="t scale x% y%|…"] camera push · [data-drift] · [data-exit=cut] · data-anim blur|zoom
+        .l2 data-words "t word*" -> keyword colour
+-->
+<style>
+:root{--paper:#efeee9;--ink:#141414;--muted:#6b6a66;--rust:#b4532f;--green:#3f8a55;--red:#a8322d;--hl:#f3e27a;--card:#fff;
+  --sans:Inter,-apple-system,"Helvetica Neue",Arial,sans-serif;--serif:"Playfair Display","Bodoni 72",Baskerville,Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100vw/108)} /* 1rem = 10px on a 1080-wide frame, scales to 1440 */
+html,body{width:100%;height:100%;overflow:hidden;background:transparent;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.paper{position:absolute;inset:0;background-color:var(--paper);
+  background-image:linear-gradient(rgba(0,0,0,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.055) 1px,transparent 1px),radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.07) 100%);
+  background-size:5.4rem 5.4rem,5.4rem 5.4rem,100% 100%;background-position:center center}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:23rem 7rem 0;gap:3.4rem;visibility:hidden}
+.l1{font-size:3.9rem;font-weight:500;letter-spacing:-.01em;text-align:center;line-height:1.2}
+.l2{font-family:var(--serif);font-style:italic;font-weight:800;font-size:7.2rem;letter-spacing:-.015em;line-height:1.02;text-align:center;margin-top:-2.2rem}
+.l1 span,.l2 span{display:inline-block;white-space:pre}
+.card{background:var(--card);border-radius:2.4rem;overflow:hidden;box-shadow:0 .4rem 1.2rem rgba(0,0,0,.08),0 2.4rem 5rem rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
+.card img,.card video{display:block;width:100%;height:100%;object-fit:cover}
+.wide{width:86rem;height:50rem}.half{width:62rem}.third{width:26rem;height:26rem}
+.polaroid{background:transparent;border:2.2rem solid #fff;border-bottom-width:6rem;border-radius:1rem;box-shadow:0 .6rem 1.4rem rgba(0,0,0,.08),0 3rem 6rem rgba(0,0,0,.14)}
+.hole{width:62rem;height:58rem;background:#cfcdc6;border-radius:.4rem}
+.alpha .hole{background:transparent}
+.badge{width:9rem;height:9rem;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 1rem 2.4rem rgba(0,0,0,.12)}
+.badge{font-size:5rem;color:var(--rust)}.badge img{width:60%;height:60%;object-fit:contain}
+.num{font-family:var(--serif);font-weight:600;font-style:normal;font-size:16rem;line-height:.9;color:var(--rust);text-align:center}
+.num small{display:block;font-family:var(--sans);font-size:2.6rem;color:var(--ink);font-weight:500}
+.pill{display:inline-block;padding:1.1rem 2.6rem;border-radius:1.6rem;border:.25rem solid #333;font-size:3.4rem;font-weight:500;background:#fff}
+.pill.rust{border-color:var(--rust);color:var(--rust)}
+.row{display:flex;gap:3rem;justify-content:center;align-items:center}
+.quote{background:#fff;border-radius:1.6rem;padding:3.4rem 4rem;font-family:Georgia,serif;font-size:4rem;line-height:1.35;width:88rem;box-shadow:0 2rem 4rem rgba(0,0,0,.1)}
+.news{background:var(--red);color:#fff;border-radius:1.2rem;padding:3rem 3.4rem;width:80rem;font-weight:700;font-size:4.2rem;line-height:1.2;box-shadow:0 2rem 4rem rgba(0,0,0,.18)}
+.news small{display:block;margin-top:2rem;font-weight:400;font-size:2.4rem;opacity:.85}
+.stat{background:#fff;border-radius:1.6rem;padding:2.4rem 2.8rem;min-width:26rem;box-shadow:0 1.6rem 3.6rem rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.06)}
+.stat .k{font-size:2.6rem;color:var(--green);font-weight:600}.stat .v{font-family:var(--serif);font-style:italic;font-size:8rem;color:var(--green);line-height:1}
+.stat .s{font-size:2.6rem;color:var(--muted)}
+mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;color:inherit;padding:0 .12em;border-radius:.15em}
+.big{font-family:var(--serif);font-style:italic;font-weight:800;font-size:22rem;line-height:.9}
+.bars{display:grid;gap:2.2rem;width:84rem}
+.bar{font-size:3rem}.bar span{font-weight:600}.bar em{font-style:normal;color:var(--muted);margin-left:1.4rem}
+.bar .track{height:4.6rem;border-radius:1rem;background:rgba(0,0,0,.06);overflow:hidden;margin-top:.8rem}
+.bar .fill{height:100%;width:0;background:var(--c,var(--green));border-radius:1rem}
+.dots{display:grid;gap:.5rem;width:84rem}.dots i{display:block;aspect-ratio:1;border-radius:.2rem;background:rgba(0,0,0,.07)}.dots i.on{background:#5b6fd6}
+.slot{position:absolute;left:50%;top:62rem;transform:translateX(-50%)}
+.slot .side-l{position:absolute;left:-14.5rem;top:12rem;display:grid;gap:3rem}.slot .side-r{position:absolute;right:-19rem;top:16rem}
+.slot .num{font-size:10rem}
+.badge img{width:62%;height:62%}
+.src{font-size:2.4rem;color:var(--muted)}
+.code{background:#16161a;color:#e8e6df;border-radius:2rem;padding:3.2rem 3.6rem;font-family:"SF Mono",Menlo,monospace;font-size:2.7rem;line-height:1.55;width:88rem;box-shadow:0 2.4rem 5rem rgba(0,0,0,.22)}
+.code .k{color:#e0a46a}.code .c{color:#8a8f98}.code div{white-space:pre}
+.col{display:flex;flex-direction:column;align-items:center;gap:2rem}
+.eq{font-family:var(--serif);font-style:italic;font-weight:700;font-size:7.4rem;width:40rem;height:40rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6rem;text-align:center;padding:2rem}
+.eq small{font-family:var(--sans);font-style:normal;font-weight:500;font-size:2.6rem;color:var(--muted)}
+.bar.gray{--c:#9a9892}
+/* size pass (v2): fills the frame like the reference */
+.scene{padding-top:26rem;gap:3.8rem}
+.l1{font-size:4.4rem}.l2{font-size:8.2rem;margin-top:-2.4rem}
+.wide{width:94rem;height:58rem}.third{width:29rem;height:29rem}
+.pill{font-size:3.8rem;padding:1.2rem 2.8rem}
+.bars{width:92rem;gap:2.8rem}.bar{font-size:3.6rem}.bar .track{height:5.6rem}
+.dots{width:92rem}
+.stat{min-width:36rem;padding:3rem 3.4rem}.stat .v{font-size:10rem}.stat .k,.stat .s{font-size:3rem}
+.quote{width:94rem;font-size:4.4rem}
+.code{width:96rem;font-size:2.55rem}
+.eq{width:46rem;height:44rem;font-size:6.6rem}
+.src{font-size:2.8rem}
+/* size pass (v3): use the empty space; content fills to ~75% height, images bigger */
+.scene{padding-top:24rem;gap:4.4rem}
+.l1{font-size:4.8rem}.l2{font-size:9.2rem;margin-top:-2.6rem}
+.wide{width:96rem;height:74rem}.third{width:31rem;height:58rem}
+.pill{font-size:4.2rem;padding:1.3rem 3rem;border-radius:1.8rem}
+.bars{width:96rem;gap:4.6rem}.bar{font-size:4.4rem}.bar .track{height:8rem;border-radius:1.6rem;margin-top:1.2rem}.bar .fill{border-radius:1.6rem}
+.bar .ico{width:5rem;height:5rem;vertical-align:-1.1rem;margin-right:1.4rem;object-fit:contain}
+.dots{width:96rem;gap:.6rem}
+.stat{min-width:44rem;padding:3.6rem 4rem}.stat .v{font-size:14rem}.stat .k,.stat .s{font-size:3.4rem}
+.quote{width:96rem;font-size:4.6rem;padding:4.4rem 4.8rem}
+.code{width:96rem;font-size:3rem;padding:4rem 4.4rem}
+.eq{width:46rem;height:60rem;font-size:7.4rem}
+.big{font-size:26rem}.src{font-size:3rem}
+.code.mini{width:31rem!important;height:58rem!important;font-size:2.6rem!important;padding:3rem!important;line-height:1.9!important}
+/* v3b: centre the content block in the space between the headline and the Instagram UI zone */
+.scene{padding-bottom:42rem}.scene > .l2 + *{margin-top:auto}.scene > :last-child{margin-bottom:auto}
+.pill{white-space:nowrap}.col .pill{font-size:3.5rem;padding:1.1rem 2.2rem}
+.code{font-size:3.3rem}.bar .track{height:10rem}
+</style>
+</head>
+<body>
+<div class="paper"></div>
+
+<!-- ============================ SCENES (edit only this part; sample uses timeline seconds) ============================ -->
+
+<!-- A. Creator in a polaroid, logo badges left, a big number right, B-roll card on top -->
+<section class="scene" data-in="0" data-out="4" style="padding-top:12rem">
+  <div class="card wide" data-in="0" data-anim="rise" style="height:44rem"><img src="" alt=""></div>
+  <div class="row" style="align-items:center;gap:3.6rem">
+    <div style="display:grid;gap:3rem"><div class="badge" data-in=".4" data-anim="pop">✳︎</div><div class="badge" data-in=".6" data-anim="pop">A</div></div>
+    <div class="polaroid" data-in="0"><div class="hole"></div></div>
+    <div class="num" data-in="1.6" data-anim="pop">2<small>new models</small></div>
+  </div>
+</section>
+
+<!-- B. Two-line headline (spoken words) + image card + pills + news card -->
+<section class="scene" data-in="4" data-out="9">
+  <p class="l1" data-words="4.05 The|4.20 models|4.42 are|4.55 called"></p>
+  <p class="l2" data-words="4.80 Fable|5.10 5.2|5.60 and|5.80 Mythos"></p>
+  <div class="card wide" data-in="4.1" data-anim="rise" style="background:linear-gradient(#e9b98a,#6b8fb3)"></div>
+  <div class="row"><span class="pill rust" data-in="5.0" data-anim="pop">Claude Fable 5.2</span><span class="pill" data-in="5.9" data-anim="pop">Claude Mythos 5.2</span></div>
+  <div class="news" data-in="6.6" data-anim="rise">Anthropic Launches Claude Fable 5.2 and Mythos 5.2<small>Source line · date</small></div>
+</section>
+
+<!-- C. Quote card with highlighter + 3 stat cards -->
+<section class="scene" data-in="9" data-out="14">
+  <p class="l1" data-words="9.05 especially|9.40 in|9.50 coding|9.85 and"></p>
+  <p class="l2" data-words="10.1 complex|10.5 technical|10.9 problems"></p>
+  <div class="quote" data-in="9.2" data-anim="rise">It shows improvements in areas like <mark data-t="10.2">coding, reasoning,</mark> and <mark data-t="11.0">vision.</mark></div>
+  <div class="row" style="gap:2.4rem">
+    <div class="stat" data-in="11.6" data-anim="rise"><div class="k">agentic coding</div><div class="v">49.1%</div><div class="s">prev: 45.5%</div></div>
+    <div class="stat" data-in="11.8" data-anim="rise"><div class="k">reasoning</div><div class="v">74.2%</div><div class="s">prev: 67.7%</div></div>
+    <div class="stat" data-in="12.0" data-anim="rise"><div class="k">research</div><div class="v">74.6%</div><div class="s">prev: 58.7%</div></div>
+  </div>
+</section>
+
+<!-- D. Count-up + bars -->
+<section class="scene" data-in="14" data-out="19">
+  <p class="l1" data-words="14.05 it|14.2 finished|14.5 the|14.6 task|14.8 in"></p>
+  <div class="big" data-in="14.6" data-anim="fade"><span class="count" data-t="14.6" data-dur="1.6" data-from="0" data-to="30"></span><span style="font-size:.35em"> hours</span></div>
+  <div class="bars">
+    <div class="bar" data-t="16.4" data-pct="78" style="--c:var(--green)" data-in="16.2" data-anim="rise"><span>New model</span><em>28% in 10 hours</em><div class="track"><div class="fill"></div></div></div>
+    <div class="bar" data-t="17.0" data-pct="52" style="--c:var(--red)" data-in="16.8" data-anim="rise"><span>Old model</span><em>26%</em><div class="track"><div class="fill"></div></div></div>
+  </div>
+</section>
+
+<!-- E. Grid fill + punchline with highlight -->
+<section class="scene" data-in="19" data-out="23">
+  <p class="l1" data-words="19.05 Anthropic|19.4 ran"></p>
+  <p class="l2" data-words="19.7 1,000|20.1 agents"></p>
+  <div class="dots" data-t="19.9" data-dur="1.8" data-n="400" data-cols="25" data-in="19.6" data-anim="fade"></div>
+  <p class="l1" data-in="21.6" data-anim="rise">But here's where <mark data-t="22.0">things get wild</mark></p>
+</section>
+
+<!-- F. v3: real tweet screenshot (source_shot.mjs) + highlighter + name label, camera pushes into the line -->
+<section class="scene" data-in="23" data-out="27" data-cam="24.6 1.18 50 52">
+  <p class="l1" data-words="23.05 even|23.25 Elon|23.50 Musk|23.75 reportedly"></p>
+  <p class="l2" data-words="24.0 joined*|24.4 the|24.55 conversation"></p>
+  <div class="shotcard" data-in="23.1" data-anim="blur"><img src="tweet.png" alt=""><i class="hlbox" data-t="24.6" style="left:3%;top:30%;width:70%;height:12%"></i></div>
+  <span class="tagline" data-in="23.6" data-anim="rise">Elon Musk</span>
+</section>
+
+<!-- G. v3: word roller (one list, the spoken item comes into focus) -->
+<section class="scene" data-in="27" data-out="30">
+  <p class="l1" data-words="27.05 Three|27.3 things|27.55 changed:"></p>
+  <div class="roll serif" data-in="27.4" data-anim="blur" data-ts="28.3,29.1"><span>the price</span><span>the speed</span><span>the rules</span></div>
+</section>
+
+<!-- ============================ END SCENES ============================ -->
+
+<script src="engine.js"></script>
+</body>
+</html>

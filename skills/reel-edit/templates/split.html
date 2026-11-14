@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reel motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Caveat:wght@700&family=Montserrat:wght@800;900&family=Poppins:wght@700;800&family=Anton&family=Archivo+Black&family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet">
+<link rel="stylesheet" href="components.css">
+<!--
+  reel-edit "split motion" template v2 (Kallaway-inspired).
+  Copy this file plus components.css and engine.js into b-rools/<topic>/ (reel_lib.assemble does it) and edit only
+  the TITLES and SCENES blocks. All times are timeline seconds of the finished Edits timeline.
+  Page modes:  .scene.split  panel on top + creator card at the bottom (render with --alpha)
+               .scene.face   creator full screen, seam caption only (the punch-in zoom is done in Edits)
+               .scene.full   panel fills the frame (voiceover-only reels, render opaque)
+-->
+<style>
+/* per-reel CSS goes here (reel_lib.assemble injects it) */
+</style>
+</head>
+<body>
+<div class="paper"></div>
+
+<!-- ============================ TITLES ============================ -->
+<header class="title" data-in="0" data-out="6"><span class="t1">Claude Just <span class="acc">Changed</span></span><span class="t2">Social Media Forever</span></header>
+<!-- ============================ END TITLES ============================ -->
+
+<!-- ============================ SCENES (edit only this part) ============================ -->
+
+<!-- A. split: product UI in the panel, hand-drawn label + arrow, creator card, seam captions -->
+<section class="scene split" data-in="0" data-out="3" data-zoom="1.6">
+  <div class="panel">
+    <div class="ui" data-in="0" data-anim="rise"><b>/analyze</b> https://instagram.com/reel/…</div>
+    <div class="row"><span class="pill accent" data-in="1.2" data-anim="pop">every secret</span><span class="pill" data-in="1.4" data-anim="pop">in one prompt</span></div>
+  </div>
+  <div class="note accent" data-in="1.6" style="left:66rem;top:96rem">Trends<svg style="left:-14rem;top:-8rem;width:14rem;height:10rem" viewBox="0 0 140 100"><path pathLength="1" d="M135 60 C 100 90, 50 80, 10 20 M10 20 L 30 22 M10 20 L 14 40"/></svg></div>
+  <div class="creator"><div class="hole"></div></div>
+  <div class="seam" data-words="0.10 This|0.35 is|0.50 how|0.75 you|1.00 turn|1.25 Claude*|1.80 into|2.00 a|2.10 social|2.40 media|2.60 manager."></div>
+</section>
+
+<!-- B. face: creator full screen, one word at a time -->
+<section class="scene face" data-in="3" data-out="6">
+  <div class="creator" style="inset:0;border-radius:0;box-shadow:none"><div class="hole"></div></div>
+  <div class="seam" data-words="3.05 Most|3.30 creators|3.60 guess.|4.20 You|4.40 won't*|4.90 have|5.05 to."></div>
+</section>
+
+<!-- C. full (voiceover reel): big keyword caption stack + count-up -->
+<section class="scene full" data-in="6" data-out="10" data-zoom="7.4">
+  <div class="panel">
+    <div class="capbox"><div class="cap" data-cin="6" data-cout="10"><span class="ln"><span class="w" data-t="6.05">They </span><span class="w" data-t="6.25">cut </span></span><span class="ln kw accent"><span class="w" data-t="7.4">94%</span></span><span class="ln"><span class="w" data-t="7.9">of </span><span class="w" data-t="8.05">the </span><span class="w" data-t="8.2">code.</span></span></div></div>
+    <div class="bars">
+      <div class="bar" data-t="7.0" data-pct="100" style="--c:var(--red)" data-in="6.6" data-anim="rise"><span>Before</span><em>1,700 lines</em><div class="track"><div class="fill"></div></div></div>
+      <div class="bar" data-t="7.5" data-pct="6" style="--c:var(--green)" data-in="7.2" data-anim="rise"><span>After</span><em>100 lines</em><div class="track"><div class="fill"></div></div></div>
+    </div>
+  </div>
+  <div class="seam" data-words="6.05 They|6.25 cut|7.4 94%*|7.9 of|8.05 the|8.2 code."></div>
+</section>
+
+<!-- ============================ END SCENES ============================ -->
+<script src="engine.js"></script>
+</body>
+</html>

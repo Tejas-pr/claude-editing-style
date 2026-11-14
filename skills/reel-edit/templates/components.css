@@ -1,0 +1,251 @@
+/* Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) */
+/* reel-edit components v2 (2026-11-14). 1rem = 10px on a 1080-wide frame (scales to the 1440x2560 render).
+   Frame is 108rem x 192rem. Instagram covers: the top ~12rem (Reels header), the right 21rem (action rail, from y~95rem down)
+   and the bottom ~42rem (caption + audio strip). Text never goes there; faces and pictures may sit under the bottom strip. */
+:root{--bg:#f4f4f1;--grid:rgba(0,0,0,.05);--ink:#111;--muted:#6b6a66;--accent:#e2231a;--rust:#b4532f;--green:#2f8a4f;--red:#c62820;
+  --hl:#f6e05e;--kw:#ffd43b;--card:#fff;--sans:Inter,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Playfair Display","Bodoni 72",Georgia,serif;--hand:Caveat,"Marker Felt",cursive;
+  /* seam captions: font, weight, size, outline, case (change per reel or per theme) */
+  --capfont:Montserrat,Inter,sans-serif;--capw:900;--capsize:7.6rem;--capstroke:1.1rem;--capcase:none;--capls:-.01em}
+:root[data-theme=paper]{--bg:#efeee9;--grid:rgba(0,0,0,.055);--accent:#b4532f}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100vw/108)}
+html,body{width:100%;height:100%;overflow:hidden;background:transparent;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.paper{position:absolute;inset:0;background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),radial-gradient(ellipse at 50% 40%,transparent 60%,rgba(0,0,0,.05) 100%);
+  background-size:4.5rem 4.5rem,4.5rem 4.5rem,100% 100%;background-position:center top}
+
+/* ---------- layouts ---------- */
+.scene{position:absolute;inset:0;visibility:hidden}
+.panel{position:absolute;left:0;right:0;top:31rem;height:86rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4rem;padding:0 6rem;transform-origin:50% 50%}
+.creator{position:absolute;left:4.5rem;right:4.5rem;top:123rem;bottom:5rem;border-radius:3.4rem;overflow:hidden;box-shadow:0 1rem 3rem rgba(0,0,0,.18)}
+.hole{width:100%;height:100%;background:#2b2b2b;border-radius:inherit}
+.alpha .hole{background:transparent}
+.scene.face .hole{position:absolute;inset:0;border-radius:0}
+.scene.full .panel{top:31rem;height:104rem}
+/* seam captions: on the creator card's top edge (split), lower-middle (face), or under the panel (full) */
+/* v2.1: the seam caption sits fully INSIDE the creator card (never straddling the paper edge) and carries a dark
+   outline + shadow, so it reads on bright rooms and dark rooms alike (v2.0 straddled the edge: unreadable on paper). */
+.seam{position:absolute;left:0;right:0;top:127rem;height:13rem;display:grid;place-items:center;pointer-events:none;z-index:5}
+.scene.face .seam{top:114rem}
+.scene.full .seam{top:136rem}
+.seam .chunk{grid-area:1/1;visibility:hidden;white-space:nowrap;font-family:var(--capfont);font-weight:var(--capw);font-size:var(--capsize);
+  line-height:1;letter-spacing:var(--capls);text-transform:var(--capcase);color:#fff;
+  -webkit-text-stroke:var(--capstroke) rgba(0,0,0,.88);paint-order:stroke fill;text-shadow:0 .6rem 2rem rgba(0,0,0,.5)}
+.seam .k{color:var(--kw)}
+.seam.ink .chunk,.scene.full .seam .chunk{color:var(--ink);text-shadow:none;-webkit-text-stroke:0}
+.seam.ink .k,.scene.full .seam .k{color:var(--accent)}
+
+/* ---------- top title (persists across pages) ---------- */
+.title{position:absolute;left:0;right:0;top:14rem;text-align:center;visibility:hidden;z-index:6}
+.title .t1,.title .t2{display:block;font:800 6.4rem/1.04 var(--sans);letter-spacing:-.03em}
+.title .t2{color:var(--accent)}
+.title .acc{font-family:var(--serif);font-style:italic;font-weight:700;letter-spacing:-.01em;position:relative;display:inline-block}
+.title .acc::after{content:'';position:absolute;left:0;right:0;bottom:-.3rem;height:.55rem;border-radius:1rem;background:var(--accent);transform-origin:left;transform:scaleX(var(--u,1))}
+
+/* ---------- big caption stacks (keyword emphasis) ---------- */
+.capbox{position:relative;width:100%;height:34rem;flex:none}
+.cap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;visibility:hidden}
+.cap .ln{display:block;font:600 5.6rem/1.08 var(--sans);letter-spacing:-.02em;color:var(--ink)}
+.cap .ln.kw{font-family:var(--serif);font-style:italic;font-weight:800;font-size:15rem;letter-spacing:-.03em;line-height:.92;margin:.4rem 0 .8rem}
+.cap .kw.accent{color:var(--accent)}.cap .kw.rust{color:var(--rust)}.cap .kw.green{color:var(--green)}.cap .kw.red{color:var(--red)}.cap .kw.ink{color:var(--ink)}
+.cap .w{display:inline-block;white-space:pre}.cap .kw .w{transform-origin:50% 80%}.cap .kw .w + .w{margin-left:.22em}
+
+/* ---------- hand-drawn labels (Kallaway-style annotations) ---------- */
+.note{position:absolute;font:700 6.4rem/1 var(--hand);color:var(--ink);white-space:nowrap}
+.note svg{position:absolute;overflow:visible;fill:none;stroke:var(--ink);stroke-width:.5rem;stroke-linecap:round;stroke-linejoin:round}
+.note.accent{color:var(--accent)}.note.accent svg{stroke:var(--accent)}
+
+/* ---------- cards and data ---------- */
+.card{background:var(--card);border-radius:2.4rem;overflow:hidden;box-shadow:0 .4rem 1.2rem rgba(0,0,0,.08),0 2.4rem 5rem rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
+.card img,.card video{display:block;width:100%;height:100%;object-fit:cover}
+.card.fit img{object-fit:contain;background:#fff}
+.wide{width:96rem;height:56rem}.scene.full .wide{height:70rem}.third{width:30rem;height:30rem}
+.shot{width:96rem;border-radius:1.8rem;box-shadow:0 2rem 4rem rgba(0,0,0,.14)}
+.ui{width:92rem;border-radius:2rem;background:#fff;box-shadow:0 2rem 5rem rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.08);padding:3rem 3.4rem;font-size:3.4rem}
+.badge{width:12rem;height:12rem;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 1rem 2.4rem rgba(0,0,0,.12)}
+.badge img{width:62%;height:62%;object-fit:contain}
+.logo-lg{height:12rem}
+.pill{display:inline-block;padding:1.3rem 3rem;border-radius:1.8rem;border:.25rem solid #333;font-size:4rem;font-weight:600;background:#fff;white-space:nowrap}
+.pill.accent{border-color:var(--accent);color:var(--accent)}.pill.rust{border-color:var(--rust);color:var(--rust)}
+.pill.good{border-color:var(--green);color:var(--green)}.pill.bad{border-color:var(--red);color:var(--red)}
+.row{display:flex;gap:3rem;justify-content:center;align-items:center;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;align-items:center;gap:2rem}
+.quote{background:#fff;border-radius:1.8rem;padding:4rem 4.4rem;font-family:Georgia,serif;font-size:4.4rem;line-height:1.35;width:94rem;box-shadow:0 2rem 4rem rgba(0,0,0,.1)}
+mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;color:inherit;padding:0 .12em;border-radius:.15em}
+.stat{background:#fff;border-radius:1.8rem;padding:3.4rem 3.8rem;min-width:42rem;box-shadow:0 1.6rem 3.6rem rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.06)}
+.stat .k{font-size:3.2rem;font-weight:600}.stat .v{font-family:var(--serif);font-style:italic;font-weight:800;font-size:13rem;line-height:1}.stat .s{font-size:3rem;color:var(--muted)}
+.stat.good .v{color:var(--green)}.stat.bad .v{color:var(--red)}
+.big{font-family:var(--serif);font-style:italic;font-weight:800;font-size:24rem;line-height:.9;text-align:center}
+.big .unit{font-family:var(--sans);font-style:normal;font-weight:700;font-size:5.6rem;letter-spacing:-.01em;color:var(--ink)}
+.bars{display:grid;gap:4rem;width:94rem}
+.bar{font-size:4.2rem}.bar span{font-weight:700}.bar em{font-style:normal;color:var(--muted);margin-left:1.4rem}
+.bar .track{height:9rem;border-radius:1.6rem;background:rgba(0,0,0,.06);overflow:hidden;margin-top:1.2rem}
+.bar .fill{height:100%;width:0;background:var(--c,var(--green));border-radius:1.6rem}
+.dots{display:grid;gap:.6rem;width:90rem}.dots i{display:block;aspect-ratio:1;border-radius:.2rem;background:rgba(0,0,0,.07)}.dots i.on{background:var(--ink)}
+.code{background:#16161a;color:#e8e6df;border-radius:2rem;padding:4rem 4.4rem;font-family:"SF Mono",Menlo,monospace;font-size:3.2rem;line-height:1.55;width:94rem;box-shadow:0 2.4rem 5rem rgba(0,0,0,.22)}
+.code .k{color:#e0a46a}.code .c{color:#8a8f98}.code div{white-space:pre}
+.src{font-size:2.8rem;color:var(--muted);text-align:center}
+.news{background:var(--red);color:#fff;border-radius:1.4rem;padding:3.4rem 3.8rem;width:90rem;font-weight:800;font-size:4.6rem;line-height:1.2;box-shadow:0 2rem 4rem rgba(0,0,0,.18)}
+.news small{display:block;margin-top:2rem;font-weight:500;font-size:2.6rem;opacity:.85}
+/* legacy paper headline */
+.l1{font-size:4.8rem;font-weight:500;letter-spacing:-.01em;text-align:center;line-height:1.2}
+.l2{font-family:var(--serif);font-style:italic;font-weight:800;font-size:9.2rem;letter-spacing:-.015em;line-height:1.02;text-align:center;margin-top:-2.6rem}
+.l1 span,.l2 span{display:inline-block;white-space:pre}
+
+/* ======================= paper v3 components (2026-11-15, striver.tech look) ======================= */
+/* real source screenshot (scripts/source_shot.mjs): white card, soft shadow, the image at its own aspect ratio */
+.shotcard{position:relative;width:86rem;background:#fff;border-radius:2.2rem;padding:1.2rem;box-shadow:0 .4rem 1.2rem rgba(0,0,0,.06),0 2.6rem 6rem rgba(0,0,0,.14);border:1px solid rgba(0,0,0,.06)}
+.shotcard img{display:block;width:100%;height:auto;border-radius:1.4rem}
+.shotcard.bare{padding:0;background:transparent;box-shadow:0 2.6rem 6rem rgba(0,0,0,.16)}
+.shotcard.sm{width:66rem}.shotcard.lg{width:96rem}
+/* highlighter sweep over an image; place with left/top/width/height in % (source_shot.mjs prints the phrase box) */
+.hlbox{position:absolute;background:#f6e05e;mix-blend-mode:multiply;border-radius:.4rem;transform-origin:left center;transform:scaleX(var(--s,0));pointer-events:none}
+.shotcard > .hlbox{margin:1.2rem}
+/* name / role label under a screenshot or photo ("Bryan Catanzaro · NVIDIA vice president") */
+.tagline{display:inline-block;background:#fff;border:.25rem solid #222;border-radius:1.4rem;padding:.9rem 2.2rem;font:600 3rem/1.1 var(--sans);letter-spacing:-.01em;box-shadow:0 .6rem 1.6rem rgba(0,0,0,.08);white-space:nowrap}
+.datepill{display:inline-block;background:#eaf6ea;color:#2f7a3b;border:.25rem solid #9fd3a6;border-radius:1.6rem;padding:.8rem 2.4rem;font:700 3rem/1 var(--sans)}
+/* word roller (motionthekx): the active word sharp, neighbours blurred above/below */
+.roll{position:relative;height:3.4em;width:100%;font:700 9rem/1 var(--sans);letter-spacing:-.04em;text-align:center}
+.roll > span{position:absolute;left:0;right:0;top:50%;white-space:nowrap}
+.roll.serif{font-family:var(--serif);font-style:italic;font-weight:400}
+/* icon row (envelopes, people, logos) under a quote */
+.icons{display:flex;gap:4rem;justify-content:center;align-items:center}.icons svg,.icons img{width:14rem;height:14rem;object-fit:contain}
+/* strike-through that draws across a word (.strike[data-t]); speech bubble = the viewer's voice ("so what?") */
+.strike{position:relative;display:inline-block}
+.strike::after{content:'';position:absolute;left:-2%;right:-2%;top:54%;height:.1em;border-radius:1rem;background:currentColor;transform-origin:left;transform:scaleX(var(--s,0))}
+.bubble{display:inline-block;background:#fff;color:#111;font:700 4.4rem/1 Poppins,var(--sans);letter-spacing:-.03em;padding:1.8rem 3.2rem;border-radius:3rem;border:.25rem solid #222;box-shadow:0 .8rem 2.4rem rgba(0,0,0,.12);position:relative}
+
+/* ======================= striver v3.1 (2026-11-15; DfuMZKhBky9, Dfr8xtCTCap, DfCwrlZz5jz): FINAL house look ======================= */
+/* FACE CARD: one persistent element outside the scenes. data-show="0-3 top wide|3-7.4 bottom polaroid|10.4-12.7 full"
+   positions: top · center · bottom · full; shapes: wide (rounded 16:10 card) · polaroid (white photo frame, portrait) */
+.facecard{position:absolute;left:50%;z-index:4;visibility:hidden;transform:translateX(-50%);pointer-events:none}
+.facecard .hole{width:100%;height:100%;background:#cfcdc6;border-radius:inherit}
+.alpha .facecard .hole{background:transparent}
+.facecard.wide{width:88rem;height:55rem;border-radius:2.6rem;box-shadow:0 .6rem 1.6rem rgba(0,0,0,.08),0 2.6rem 6rem rgba(0,0,0,.14)}
+.facecard.polaroid{width:62rem;height:68rem;border:1.3rem solid #fff;border-radius:.5rem;box-shadow:0 .6rem 1.4rem rgba(0,0,0,.08),0 3rem 6rem rgba(0,0,0,.14)}
+.facecard.polaroid .hole{border-radius:.2rem}
+.facecard.pos-top{top:27rem}.facecard.pos-center.wide{top:56rem}.facecard.pos-center.polaroid{top:50rem}
+.facecard.pos-bottom.wide{top:100rem}.facecard.pos-bottom.polaroid{top:98rem}
+.facecard.pos-full{left:0;top:0;width:100%;height:100%;transform:none;border:0;border-radius:0;box-shadow:none}
+.facecard.pos-full .hole{border-radius:0}
+/* scenes make room for the face (class set automatically from the face card) */
+.scene.f-bottom{padding-bottom:97rem!important}
+.scene.f-top.f-wide{padding-top:86rem!important}.scene.f-top.f-polaroid{padding-top:99rem!important}
+.scene.f-full .l1,.scene.f-full .l2{color:#fff;text-shadow:0 .3rem 1.6rem rgba(0,0,0,.55)}
+/* SUBTITLE caption (DfCwrlZz5jz): one line under the media, Poppins, keyword in a yellow box that sweeps in */
+.sub{position:absolute;left:0;right:0;top:134rem;display:grid;place-items:center;z-index:5;pointer-events:none}
+.sub .line{grid-area:1/1;visibility:hidden;max-width:66rem;text-align:center;font:600 5rem/1.25 Poppins,var(--sans);letter-spacing:-.025em;color:var(--ink)}
+.sub .k{position:relative;display:inline-block;padding:0 .14em;z-index:0}
+.sub .k::before{content:'';position:absolute;inset:.06em 0 .02em;background:#f6e05e;border-radius:.12em;z-index:-1;transform-origin:left;transform:scaleX(var(--s,0))}
+.scene.f-full .sub .line{color:#fff;text-shadow:0 .3rem 1.6rem rgba(0,0,0,.6)}
+/* inverted highlight on a screenshot (black box, white text): <i class="hlbox inv" data-t …> */
+.hlbox.inv{background:#fff;mix-blend-mode:difference;border-radius:.2rem}
+/* source line under a screenshot ("Original post · @handle · 14 Nov 2026") */
+.srcline{font:500 2.5rem/1.3 var(--sans);color:#8a8984;text-align:center}
+/* person photo: black-and-white polaroid, slightly tilted, with a name label */
+.person{display:inline-flex;align-items:center;gap:2.4rem}
+.person .ph{width:24rem;height:26rem;border:1rem solid #fff;border-bottom-width:3.4rem;transform:rotate(-3deg);box-shadow:0 1.6rem 3rem rgba(0,0,0,.16);overflow:hidden;background:#ddd}
+.person .ph img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+.person .nm{background:#fff;border-radius:1.2rem;padding:1.2rem 2.4rem;font:700 3.4rem/1 var(--sans);box-shadow:0 .8rem 2rem rgba(0,0,0,.1)}
+
+/* ======================= STORY edit style (v2.2, 2026-11-15; story.html) =======================
+   From the @hilzuckerman reel (ref/README.md): the creator stays FULL SCREEN on the Edits main track and the overlay
+   adds everything else. Page modes:
+     .scene.story  transparent page: the face shows through; captions at chest height, HUD/pills/labels at the top
+     .scene.blur   the timeline-aligned face (video.face) blurred + dimmed behind a big text stack (opaque page)
+     .scene.bw     the face in black and white for one word ("boring", "failed"); opaque page
+     .scene.card   a full-screen colour card (butter / cream / ink): "step N" + progress dots + huge Poppins text with a
+                   serif-italic keyword; opaque page. .pad = yellow legal pad (handwritten checklist recap)
+     .scene.media   a full-bleed screenshot / phone recording with a big number over it; opaque page */
+:root{--pop:Poppins,Inter,sans-serif;--iserif:'Instrument Serif',Georgia,serif;--hwf:Gaegu,Caveat,cursive;
+  --butter:#f3dd8b;--cardY:#f4e08f;--cream:#f6f3ea}
+.scene.story .seam,.scene.bw .seam{top:104rem}
+/* check renders only (render.mjs --under face-cut.mp4): the face under the story pages, never in the --alpha overlay */
+video.under{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1}
+.scene.blur .seam,.scene.card .seam,.scene.media .seam{display:none}
+/* the face copy inside the overlay (blur / bw pages). data-src = face-cut.mp4 (reel_lib.face_cut), timeline-aligned */
+.scene video.face{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.scene.blur{background:#1b1714}
+.scene.blur video.face{filter:blur(calc(var(--b,1)*2.8rem)) brightness(calc(1 - var(--b,1)*.48)) saturate(.9);transform:scale(1.08)}
+.scene.bw video.face{filter:grayscale(1) contrast(1.06) brightness(1.02)}
+/* story title (Hil-style hook): small white line + one huge butter word, on a soft top vignette */
+.title.pop{top:14rem}
+.title.pop::before{content:'';position:absolute;left:-10rem;right:-10rem;top:-16rem;height:44rem;z-index:-1;
+  background:radial-gradient(ellipse 64% 52% at 50% 46%,rgba(0,0,0,.6),transparent 74%)}
+.title.pop .t1{font:700 4.6rem/1.1 var(--pop);letter-spacing:-.03em;color:#fff;text-shadow:0 .2rem 1rem rgba(0,0,0,.35)}
+.title.pop .t2{font:800 11rem/1 var(--pop);letter-spacing:-.045em;color:var(--butter);text-shadow:0 .3rem 1.4rem rgba(0,0,0,.3)}
+.title.pop .acc{font-family:var(--iserif);font-weight:400}.title.pop .acc::after{display:none}
+/* top HUD zone on story pages (y 14 to 40rem): labels, pills, meters. One thing at a time. */
+.top{position:absolute;left:6rem;right:6rem;top:15rem;display:flex;flex-direction:column;align-items:center;gap:1.4rem;z-index:6}
+.top::before{content:'';position:absolute;left:-16rem;right:-16rem;top:-18rem;height:46rem;z-index:-1;
+  background:radial-gradient(ellipse 62% 50% at 50% 46%,rgba(0,0,0,.55),transparent 74%)}
+.hw{font:700 5.6rem/1.05 var(--hwf);color:#fff;text-align:center;text-shadow:0 .2rem .6rem rgba(0,0,0,.7),0 0 1.6rem rgba(0,0,0,.55)}
+.hw .y,.y{color:var(--butter)}
+.lbl{font:700 5.2rem/1.08 var(--pop);letter-spacing:-.035em;color:#fff;text-align:center;text-shadow:0 .2rem 1rem rgba(0,0,0,.35)}
+.lbl.big{font-size:9rem;letter-spacing:-.045em}
+.bubble{display:inline-block;background:#fff;color:#111;font:700 4.4rem/1 var(--pop);letter-spacing:-.03em;padding:1.8rem 3.2rem;border-radius:3rem;
+  box-shadow:0 .8rem 2.4rem rgba(0,0,0,.25);position:relative}
+.bubble::after{content:'';position:absolute;left:4rem;bottom:-1.4rem;border:1.4rem solid transparent;border-top-color:#fff;border-bottom:0}
+.searchbar{display:flex;align-items:center;gap:2rem;width:62rem;background:#fff;color:#111;border-radius:4rem;padding:1.6rem 3rem;font:600 3.6rem/1 var(--pop);box-shadow:0 .8rem 2.4rem rgba(0,0,0,.25)}
+.searchbar svg{width:3.6rem;height:3.6rem;flex:none;fill:none;stroke:#888;stroke-width:2.6}
+.chip{display:inline-flex;align-items:center;gap:1.4rem;background:#fff;color:#111;border-radius:2.2rem;padding:1.2rem 2.6rem 1.2rem 1.2rem;font:600 3.4rem/1 var(--pop);letter-spacing:-.02em;box-shadow:0 .6rem 1.6rem rgba(0,0,0,.2)}
+.chip b{display:grid;place-items:center;width:5rem;height:5rem;border-radius:1.4rem;background:#111;color:#fff;font-size:3rem}
+.chip.on{background:var(--butter)}
+.notif{display:flex;align-items:center;gap:2.2rem;background:rgba(255,255,255,.95);color:#111;border-radius:2.6rem;padding:2rem 3rem;width:72rem;box-shadow:0 1rem 3rem rgba(0,0,0,.25);font:700 3.6rem/1.15 var(--pop);letter-spacing:-.02em}
+.notif small{display:block;font:500 2.8rem/1.2 var(--sans);color:#666;letter-spacing:0}
+.notif .ic{width:8rem;height:8rem;border-radius:1.8rem;background:#eee;display:grid;place-items:center;flex:none;overflow:hidden}
+.notif .ic img{width:100%;height:100%;object-fit:cover}
+/* battery meter: the running "how interesting is it now" score (4% -> 25% -> 50% -> 100%) */
+.meter{display:flex;align-items:center;gap:2rem;font:800 7rem/1 var(--pop);letter-spacing:-.04em;color:var(--butter);text-shadow:0 .2rem 1rem rgba(0,0,0,.3)}
+.meter .bat{position:relative;width:15rem;height:7rem;border:.6rem solid #fff;border-radius:1.8rem;padding:.7rem;box-shadow:0 .2rem 1rem rgba(0,0,0,.3)}
+.meter .bat::after{content:'';position:absolute;right:-2.2rem;top:1.8rem;width:1.2rem;height:2.4rem;border-radius:0 .6rem .6rem 0;background:#fff}
+.meter .bat i{display:block;height:100%;width:var(--p,0%);border-radius:.8rem;background:var(--butter)}
+.meter em{font:700 4.4rem/1 var(--pop);font-style:normal;color:#fff;letter-spacing:-.03em}
+/* strike-through that draws across a word, then the corrected word comes in */
+
+
+/* big stacks on blur / card pages: Poppins lines + one huge serif-italic keyword line (engine = .cap) */
+.scene.blur .capbox,.scene.card .capbox,.scene.media .capbox{position:absolute;left:5rem;right:5rem;top:34rem;height:96rem}
+.scene.blur .cap .ln,.scene.media .cap .ln{font:700 8.4rem/1.04 var(--pop);letter-spacing:-.045em;color:#fff}
+.scene.blur .cap .ln.kw,.scene.media .cap .ln.kw{font-family:var(--iserif);font-weight:400;font-style:italic;color:var(--butter);letter-spacing:-.01em;line-height:1;margin:.6rem 0 1rem}
+.scene.card .cap .ln{font:800 10rem/.98 var(--pop);letter-spacing:-.055em;color:#111}
+.scene.card .cap .ln.kw{font-family:var(--iserif);font-weight:400;font-style:italic;color:#111;letter-spacing:-.01em;line-height:1;margin:.4rem 0 .6rem}
+.cap.left{align-items:flex-start;text-align:left;justify-content:flex-start}
+.scene.card .cap.left{justify-content:center}
+/* stacks fill ~80% of the width on full pages (the reference reads at a glance); cap() inline kw sizes scale with it */
+.scene.blur .cap,.scene.media .cap{zoom:1.3}.scene.card .cap{zoom:1.32}
+/* colour cards */
+.scene.card{background:var(--cardY)}.scene.card.cream{background:var(--cream)}.scene.card.ink{background:#141414}
+.scene.card.ink .cap .ln,.scene.card.ink .cap .ln.kw{color:#fff}.scene.card.ink .cap .ln.kw{color:var(--butter)}
+.stephead{position:absolute;left:7rem;right:9rem;top:26rem;display:flex;justify-content:space-between;align-items:center;font:700 3.6rem/1 var(--pop);letter-spacing:-.02em;color:#111}
+.scene.card.ink .stephead{color:#fff}
+.prog{display:flex;gap:1rem}.prog i{width:2rem;height:2rem;border-radius:50%;border:.35rem solid currentColor}.prog i.on{background:currentColor}
+.check{display:inline-block;width:.8em;height:.8em;border:.09em solid currentColor;border-radius:.18em;vertical-align:-.02em;margin-left:.25em}
+/* yellow legal pad: the handwritten recap/checklist (text types on with .type) */
+.scene.card.pad{background:#e9e3cf}
+.legal{position:absolute;left:5rem;right:5rem;top:14rem;bottom:30rem;border-radius:1.2rem;background-color:#fbf1a9;padding:12rem 6rem 0 7rem;
+  background-image:linear-gradient(90deg,transparent 4.6rem,rgba(200,60,60,.45) 4.6rem,rgba(200,60,60,.45) 4.9rem,transparent 4.9rem),
+  repeating-linear-gradient(transparent 0 7.8rem,rgba(60,90,160,.28) 7.8rem 8rem);background-position:0 0,0 9rem;box-shadow:0 2rem 5rem rgba(0,0,0,.18)}
+.legal .hd{position:absolute;left:0;right:0;top:3rem;text-align:center;font:600 2.6rem var(--sans);color:#777}
+.legal .ln2{display:block;font:700 6.4rem/8rem var(--hwf);color:#2a2a2a;white-space:pre-wrap}
+.legal .ln2.u{text-decoration:underline;text-decoration-thickness:.3rem;text-underline-offset:1rem}
+/* full-bleed screenshot / phone recording */
+.scene.media{background:#111}
+.scene.media .code{width:98rem;font-size:3.9rem;padding:5rem 4rem;overflow:hidden}
+.scene.media .bleed{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.phone{width:72rem;height:146rem;border-radius:9rem;border:1.6rem solid #0d0d0d;overflow:hidden;background:#000;box-shadow:0 3rem 7rem rgba(0,0,0,.45)}
+.phone img,.phone video{width:100%;height:100%;object-fit:cover;display:block}
+.numover{position:absolute;left:0;right:0;top:66rem;text-align:center;font:800 26rem/1 var(--pop);letter-spacing:-.06em;color:var(--butter);text-shadow:0 1rem 4rem rgba(0,0,0,.55)}
+.numover small{display:block;font:700 7rem/1 var(--pop);letter-spacing:-.04em;color:#fff;margin-top:1rem}
+/* icons that fill on the word (bookmark on "save"), cursor that presses (follow) */
+.fillicon svg{width:18rem;height:22rem;overflow:visible}
+.fillicon path{fill:rgba(243,221,139,var(--f,0));stroke:#fff;stroke-width:3;stroke-linejoin:round}
+.fillicon[data-t] path{stroke:color-mix(in srgb,#fff calc(100% - var(--f,0)*100%),var(--butter))}
+.profile{display:flex;align-items:center;gap:2rem;background:#fff;color:#111;border-radius:2.6rem;padding:1.8rem 2.4rem;box-shadow:0 1rem 3rem rgba(0,0,0,.3);font:700 3.4rem/1.1 var(--pop);letter-spacing:-.02em;position:relative}
+.profile img,.profile .av{width:8rem;height:8rem;border-radius:50%;object-fit:cover;background:#ddd;flex:none}
+.profile small{display:block;font:500 2.6rem var(--sans);color:#666}
+.profile .fbtn{margin-left:2rem;background:#3b82f6;color:#fff;border-radius:1.4rem;padding:1.4rem 3rem;font:700 3rem/1 var(--pop)}
+.profile .fbtn.done{background:#e5e5e5;color:#111}
+.cursor{position:absolute;width:6rem;height:6rem;right:2rem;bottom:-3rem}
+.cursor svg{width:100%;height:100%;fill:#fff;stroke:#111;stroke-width:1.6}

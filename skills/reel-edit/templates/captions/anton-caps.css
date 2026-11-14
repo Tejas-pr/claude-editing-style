@@ -1,0 +1,7 @@
+/* Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) */
+/* Caption style "anton-caps" (ALTERNATE). Anton (OFL, Google Fonts), all caps, white with a heavy dark outline; the
+   keyword is yellow. Loud, max readability at a glance: hype/news/meme reels. Approved 2026-11-14. */
+:root{--capfont:Anton,Impact,sans-serif;--capw:400;--capsize:9.2rem;--capcase:uppercase;--capls:.01em;--capstroke:1.1rem;--kw:#ffd43b}
+.seam .chunk{-webkit-text-stroke:var(--capstroke) rgba(0,0,0,.88);paint-order:stroke fill;text-shadow:0 .6rem 2rem rgba(0,0,0,.5)}
+.seam .k{color:var(--kw)}
+.scene.full .seam .chunk{color:#fff}

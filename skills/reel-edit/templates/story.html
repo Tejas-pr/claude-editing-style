@@ -1,0 +1,123 @@
+<!doctype html>
+<!-- Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reel motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&family=Gaegu:wght@700&family=Playfair+Display:ital,wght@1,600;1,700;1,800&family=Caveat:wght@700&family=Anton&display=block" rel="stylesheet">
+<link rel="stylesheet" href="components.css">
+<!--
+  reel-edit "story" template v2.2 (2026-11-15). Edit style 3, modelled on @hilzuckerman DfWHPChtG_d (ref/README.md).
+  The creator is FULL SCREEN on the Edits main track the whole time. This overlay (render with --alpha) adds:
+    .scene.story  transparent: chest-height one-word captions + one top element (title, label, pill, meter, bubble)
+    .scene.blur   face blurred + dimmed behind a big Poppins / serif-italic stack (the thesis, the payoff lines)
+    .scene.bw     face in black and white for one word
+    .scene.card   full-screen butter / cream / ink card: "step N" + dots + huge text (the framework steps)
+    .scene.card.pad  yellow legal pad, handwritten checklist that types on (the saveable recap)
+    .scene.media   full-bleed phone / screenshot with a giant number over it
+  blur and bw pages need face-cut.mp4 next to this file: the cut creator track, timeline-aligned
+  (reel_lib.face_cut(...) builds it from the raw footage + PLAN.map.json). Use reel_lib.assemble(..., captions="pop-serif").
+  Copy into b-rools/<topic>/ (reel_lib.assemble does it) and edit only the TITLES and SCENES blocks. Times = timeline s.
+-->
+<style>
+/* per-reel CSS goes here (reel_lib.assemble injects it) */
+</style>
+</head>
+<body>
+
+<!-- ============================ TITLES ============================ -->
+<header class="title pop" data-in="0" data-out="3"><span class="t1">Why your side project gets</span><span class="t2">0 users</span></header>
+<!-- ============================ END TITLES ============================ -->
+
+<!-- ============================ SCENES (edit only this part) ============================ -->
+
+<!-- A. story: hook. Title on frame 1, one word per chunk at chest height, keyword in serif italic -->
+<section class="scene story" data-in="0" data-out="3">
+  <div class="seam" data-max="1" data-words="0.05 If|0.30 you|0.50 built|0.80 something|1.30 nobody|1.70 uses,|2.10 watch*|2.45 this."></div>
+</section>
+
+<!-- B. blur: the thesis as a big stack (line by line, keyword ghosts then lands) -->
+<section class="scene blur" data-in="3" data-out="5.6">
+  <video class="face" data-src="face-cut.mp4" data-in="0" data-from="0" data-anim="none"></video>
+  <div class="capbox"><div class="cap" data-cin="3" data-cout="5.6">
+    <span class="ln"><span class="w" data-t="3.05">it's not the </span></span>
+    <span class="ln kw" style="font-size:17rem"><span class="w" data-t="3.6">code</span></span>
+    <span class="ln"><span class="w" data-t="4.3">it's the </span></span>
+    <span class="ln kw" style="font-size:13rem"><span class="w" data-t="4.75">first line</span></span>
+  </div></div>
+</section>
+
+<!-- C. card: step 1 of 4. Strike the old word, the new one lands -->
+<section class="scene card" data-in="5.6" data-out="8">
+  <div class="stephead"><span>step 1</span><span class="prog" data-n="4" data-on="1"></span></div>
+  <div class="capbox"><div class="cap left" data-cin="5.6" data-cout="8">
+    <span class="ln"><span class="w" data-t="5.65">start with a</span></span>
+    <span class="ln kw" style="font-size:13rem"><span class="w" data-t="6.1">moment,</span></span>
+    <span class="ln"><span class="w" data-t="6.6">not a</span></span>
+    <span class="ln"><span class="w" data-t="6.85"><span class="strike" data-t="7.4">feature.</span></span></span>
+  </div></div>
+</section>
+
+<!-- D. story: the running score (meter) + the viewer's voice (bubble) + a retention line that draws on -->
+<section class="scene story" data-in="8" data-out="11">
+  <div class="top">
+    <div class="meter" data-in="8" data-anim="pop" data-t="8.3" data-from="4" data-to="25"><span class="bat"><i></i></span><span class="pct">4%</span><em>interesting</em></div>
+    <div class="hw" data-in="8.5" data-anim="fade">+ a <span class="y">consequence</span></div>
+    <div class="bubble" data-in="9.6" data-anim="pop">so what?</div>
+  </div>
+  <div class="seam" data-max="1" data-words="8.05 It|8.25 cost|8.50 me|8.75 3*|9.10 weekends.|9.70 So|9.90 what?*|10.40 Keep|10.60 going."></div>
+</section>
+
+<!-- E. bw: one word in black and white -->
+<section class="scene bw" data-in="11" data-out="12">
+  <video class="face" data-src="face-cut.mp4" data-in="0" data-from="0" data-anim="none"></video>
+  <div class="top"><div class="lbl" data-in="11" data-anim="fade">boring <span class="strike" data-t="11.5">landing page</span></div></div>
+  <div class="seam" data-max="1" data-words="11.05 boring*"></div>
+</section>
+
+<!-- F. story: search bar types, "No Results", a timer that counts -->
+<section class="scene story" data-in="12" data-out="15">
+  <div class="top">
+    <div class="searchbar" data-in="12" data-anim="rise"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/></svg><span class="type" data-t="12.2" data-dur=".7">my side project</span></div>
+    <div class="lbl" data-in="13.1" data-anim="pop">No Results</div>
+    <div class="lbl big y" data-in="13.8" data-anim="pop"><span class="count" data-t="13.8" data-dur="1" data-from="1116" data-to="1200" data-fmt="mmss">18:36</span></div>
+  </div>
+  <div class="seam" data-max="1" data-words="12.05 I|12.20 searched|12.55 for|12.70 it.|13.10 Nothing.*|13.80 Twenty*|14.20 minutes."></div>
+</section>
+
+<!-- G. media: phone recording / screenshot full bleed + giant number -->
+<section class="scene media" data-in="15" data-out="18">
+  <div class="panel" style="top:14rem;height:150rem"><div class="phone" data-in="15" data-anim="rise"><div style="width:100%;height:100%;background:linear-gradient(160deg,#3a3f52,#14161d)"></div></div></div>
+  <div class="numover" data-in="15.4" data-anim="pop"><span class="count" data-t="15.4" data-dur="1.2" data-from="900" data-to="18000">900</span><small>stars</small></div>
+</section>
+
+<!-- H. pad: the saveable recap, handwritten, types on line by line -->
+<section class="scene card pad" data-in="18" data-out="21">
+  <div class="legal"><div class="hd">before you post</div>
+    <span class="ln2 u type" data-t="18.1" data-dur=".6">ask yourself 4 questions</span>
+    <span class="ln2 type" data-t="18.8" data-dur=".5">1. a moment?</span>
+    <span class="ln2 type" data-t="19.3" data-dur=".5">2. a cost?</span>
+    <span class="ln2 type" data-t="19.8" data-dur=".5">3. the turn?</span>
+    <span class="ln2 type" data-t="20.3" data-dur=".5">4. one thing to do?</span>
+  </div>
+</section>
+
+<!-- I. story: recap chips + bookmark fills on "save" + profile card, cursor presses Follow -->
+<section class="scene story" data-in="21" data-out="24.5">
+  <div class="top">
+    <div class="row" style="gap:1.2rem" data-in="21" data-anim="rise"><span class="chip"><b>1</b>a moment</span><span class="chip"><b>2</b>a cost</span></div>
+    <div class="row" style="gap:1.2rem" data-in="21.2" data-anim="rise"><span class="chip"><b>3</b>the turn</span><span class="chip"><b>4</b>one action</span></div>
+    <div class="fillicon" data-in="21.6" data-anim="pop" data-t="22.1"><svg viewBox="0 0 60 74"><path d="M6 4h48v66L30 52 6 70z"/></svg></div>
+  </div>
+  <div class="profile" data-in="22.8" data-anim="rise" style="position:absolute;left:14rem;top:128rem"><span class="av"></span><span>your.handle<small>your niche</small></span>
+    <span class="fbtn" data-on-t="23.6" data-on-text="Following">Follow</span>
+    <span class="cursor press" data-t="23.5"><svg viewBox="0 0 24 24"><path d="M4 2l16 10-7 1.5L9.5 21z"/></svg></span></div>
+  <div class="seam" data-max="1" data-words="21.05 Save*|21.40 this|21.65 for|21.80 your|22.00 next|22.25 post."></div>
+</section>
+
+<!-- ============================ END SCENES ============================ -->
+<script src="engine.js"></script>
+</body>
+</html>
