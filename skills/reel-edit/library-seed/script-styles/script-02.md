@@ -1,6 +1,7 @@
 ---
 id: script-02
-name: Double Tap explainer
+name: Twice
+aka: Double Tap explainer
 kind: script-style
 source: built-in
 ---

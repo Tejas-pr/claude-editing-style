@@ -1,6 +1,7 @@
 ---
 id: cap-03
-name: pop-serif
+name: Silk
+preset: pop-serif
 kind: caption-style
 css: templates/captions/pop-serif.css
 default_size: headline 12rem · chest 8.4rem

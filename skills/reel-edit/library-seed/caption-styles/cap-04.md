@@ -1,6 +1,7 @@
 ---
 id: cap-04
-name: classic
+name: Heritage
+preset: classic
 kind: caption-style
 css: templates/captions/(built into the template)
 default_size: 9.2rem

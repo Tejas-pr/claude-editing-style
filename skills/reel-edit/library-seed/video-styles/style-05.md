@@ -1,6 +1,7 @@
 ---
 id: style-05
-name: Striver subtitles
+name: Echo
+aka: paper subtitles
 kind: video-style
 template: paper.html
 default_caption: pop-serif

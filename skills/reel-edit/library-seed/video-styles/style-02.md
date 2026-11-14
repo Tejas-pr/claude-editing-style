@@ -1,6 +1,7 @@
 ---
 id: style-02
-name: Paper classic
+name: Ink
+aka: paper classic
 kind: video-style
 template: paper.html
 default_caption: classic

@@ -1,6 +1,7 @@
 ---
 id: cap-02
-name: anton-caps
+name: Volt
+preset: anton-caps
 kind: caption-style
 css: templates/captions/anton-caps.css
 default_size: 9.2rem

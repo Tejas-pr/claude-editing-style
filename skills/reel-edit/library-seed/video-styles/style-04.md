@@ -1,6 +1,7 @@
 ---
 id: style-04
-name: Striver paper (default)
+name: Folio
+aka: paper pro (default)
 kind: video-style
 template: paper.html
 default_caption: pop-serif

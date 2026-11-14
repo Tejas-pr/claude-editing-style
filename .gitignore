@@ -30,3 +30,6 @@ __pycache__/
 .DS_Store
 node_modules/
 .env
+
+# the README demo is part of the repo
+!docs/demo.mp4

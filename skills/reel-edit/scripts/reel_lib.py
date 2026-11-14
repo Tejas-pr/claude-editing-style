@@ -56,13 +56,15 @@ CAPTION_STYLES = ("serif-band", "anton-caps", "pop-serif", "classic")   # classi
 # EDIT STYLES (numbered, like caption styles). the dialog asks which one at the start of every edit.
 # Catalogue with previews: skills/reel-edit/STYLES.md. id -> (template, default captions)
 STYLES = {
-  "style-01": ("split.html", "serif-band"),  # Kallaway split: grid-paper panel on top, creator card at the bottom, seam captions
-  "style-02": ("paper.html", "classic"),     # Paper classic: headline (Inter + Playfair) + cards, voiceover, face in a polaroid
-  "style-03": ("story.html", "pop-serif"),   # Hil story: creator full screen, blur pages, colour step cards, meter, legal pad
-  "style-04": ("paper.html", "pop-serif"),   # Striver paper (HOUSE): headline + real screenshots + smooth motion + moving face card
-  "style-05": ("paper.html", "pop-serif"),   # Striver subtitles: face card wide on top, subtitle line under the media (.sub)
+  "style-01": ("split.html", "serif-band"),  # DUET · Duet (split card): grid-paper panel on top, creator card at the bottom, seam captions
+  "style-02": ("paper.html", "classic"),     # INK · Ink (paper classic): headline (Inter + Playfair) + cards, voiceover, face in a polaroid
+  "style-03": ("story.html", "pop-serif"),   # GLOW · Glow (full-face story): creator full screen, blur pages, colour step cards, meter, legal pad
+  "style-04": ("paper.html", "pop-serif"),   # FOLIO · Folio (default): headline + real screenshots + smooth motion + moving face card
+  "style-05": ("paper.html", "pop-serif"),   # ECHO · Echo (paper subtitles): face card wide on top, subtitle line under the media (.sub)
 }
-EDIT_STYLES = {k: v[0] for k, v in STYLES.items()} | {"split": "split.html", "paper": "paper.html", "story": "story.html"}
+STYLE_NAMES = {"duet": "style-01", "ink": "style-02", "glow": "style-03", "folio": "style-04", "echo": "style-05"}
+CAPTION_NAMES = {"velvet": "serif-band", "volt": "anton-caps", "silk": "pop-serif", "heritage": "classic"}   # marker = .sub lines
+EDIT_STYLES = {k: v[0] for k, v in STYLES.items()} | {n: STYLES[i][0] for n, i in STYLE_NAMES.items()} | {"split": "split.html", "paper": "paper.html", "story": "story.html"}
 def template(style): return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates", EDIT_STYLES[style])
 
 
@@ -79,8 +81,15 @@ def face_cut(raw, map_path, out, offset=0.0, w=1440, h=2560, fps=30):
                     "-c:v", "libx264", "-preset", "medium", "-crf", "12", "-g", "1", "-pix_fmt", "yuv420p", out], check=True)
     return out
 
-def assemble(template, out, scenes, titles=(), css="", page_title="Reel motion", captions="serif-band"):
+ASPECT_CSS = {"16:9": "html{font-size:calc(100vh/108)}.scene{padding:9rem 14rem 6rem!important;gap:3.2rem!important}"
+                       ".l1{font-size:4.4rem!important}.l2{font-size:9.6rem!important;margin-top:-1.4rem!important}",
+              "1:1": "html{font-size:calc(100vh/108)}.scene{padding:9rem 8rem 6rem!important}"}
+def assemble(template, out, scenes, titles=(), css="", page_title="Reel motion", captions="serif-band", aspect="9:16"):
+    """aspect: 9:16 (default, frame 108x192rem) | 16:9 (192x108rem) | 1:1 (108x108rem). Render with matching
+    render.mjs --w/--h (16:9: --w 3840 --h 2160 for a 4K Edits canvas, 1920x1080 for a check)."""
+    css = ASPECT_CSS.get(aspect, "") + "\n" + css
     """captions: one of CAPTION_STYLES (None = the bare components.css look, not approved for posting)."""
+    captions = CAPTION_NAMES.get(str(captions).lower(), captions) if captions else captions
     if captions and captions != "classic":
         if captions not in CAPTION_STYLES: raise ValueError(f"caption style {captions!r} not in {CAPTION_STYLES}")
         css = open(os.path.join(os.path.dirname(os.path.abspath(template)), "captions", captions + ".css")).read() + "\n" + css

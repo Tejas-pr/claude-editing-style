@@ -1,6 +1,7 @@
 ---
 id: script-01
-name: Moment → cost → turn → action
+name: Turn
+aka: Moment → cost → turn → action
 kind: script-style
 source: built-in
 ---

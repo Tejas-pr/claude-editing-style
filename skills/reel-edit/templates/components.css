@@ -51,7 +51,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:transparent;color:va
 .cap .kw.accent{color:var(--accent)}.cap .kw.rust{color:var(--rust)}.cap .kw.green{color:var(--green)}.cap .kw.red{color:var(--red)}.cap .kw.ink{color:var(--ink)}
 .cap .w{display:inline-block;white-space:pre}.cap .kw .w{transform-origin:50% 80%}.cap .kw .w + .w{margin-left:.22em}
 
-/* ---------- hand-drawn labels (Kallaway-style annotations) ---------- */
+/* ---------- hand-drawn labels (annotations) ---------- */
 .note{position:absolute;font:700 6.4rem/1 var(--hand);color:var(--ink);white-space:nowrap}
 .note svg{position:absolute;overflow:visible;fill:none;stroke:var(--ink);stroke-width:.5rem;stroke-linecap:round;stroke-linejoin:round}
 .note.accent{color:var(--accent)}.note.accent svg{stroke:var(--accent)}
@@ -93,7 +93,7 @@ mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;colo
 .l2{font-family:var(--serif);font-style:italic;font-weight:800;font-size:9.2rem;letter-spacing:-.015em;line-height:1.02;text-align:center;margin-top:-2.6rem}
 .l1 span,.l2 span{display:inline-block;white-space:pre}
 
-/* ======================= paper v3 components (2026-11-15, striver.tech look) ======================= */
+/* ======================= paper v3 components (2026-11-15) ======================= */
 /* real source screenshot (scripts/source_shot.mjs): white card, soft shadow, the image at its own aspect ratio */
 .shotcard{position:relative;width:86rem;background:#fff;border-radius:2.2rem;padding:1.2rem;box-shadow:0 .4rem 1.2rem rgba(0,0,0,.06),0 2.6rem 6rem rgba(0,0,0,.14);border:1px solid rgba(0,0,0,.06)}
 .shotcard img{display:block;width:100%;height:auto;border-radius:1.4rem}
@@ -105,7 +105,7 @@ mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;colo
 /* name / role label under a screenshot or photo ("Bryan Catanzaro · NVIDIA vice president") */
 .tagline{display:inline-block;background:#fff;border:.25rem solid #222;border-radius:1.4rem;padding:.9rem 2.2rem;font:600 3rem/1.1 var(--sans);letter-spacing:-.01em;box-shadow:0 .6rem 1.6rem rgba(0,0,0,.08);white-space:nowrap}
 .datepill{display:inline-block;background:#eaf6ea;color:#2f7a3b;border:.25rem solid #9fd3a6;border-radius:1.6rem;padding:.8rem 2.4rem;font:700 3rem/1 var(--sans)}
-/* word roller (motionthekx): the active word sharp, neighbours blurred above/below */
+/* word roller: the active word sharp, neighbours blurred above/below */
 .roll{position:relative;height:3.4em;width:100%;font:700 9rem/1 var(--sans);letter-spacing:-.04em;text-align:center}
 .roll > span{position:absolute;left:0;right:0;top:50%;white-space:nowrap}
 .roll.serif{font-family:var(--serif);font-style:italic;font-weight:400}
@@ -116,7 +116,7 @@ mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;colo
 .strike::after{content:'';position:absolute;left:-2%;right:-2%;top:54%;height:.1em;border-radius:1rem;background:currentColor;transform-origin:left;transform:scaleX(var(--s,0))}
 .bubble{display:inline-block;background:#fff;color:#111;font:700 4.4rem/1 Poppins,var(--sans);letter-spacing:-.03em;padding:1.8rem 3.2rem;border-radius:3rem;border:.25rem solid #222;box-shadow:0 .8rem 2.4rem rgba(0,0,0,.12);position:relative}
 
-/* ======================= striver v3.1 (2026-11-15; DfuMZKhBky9, Dfr8xtCTCap, DfCwrlZz5jz): FINAL house look ======================= */
+/* ======================= paper v3.1 (2026-11-15): face card, subtitles, screenshot extras ======================= */
 /* FACE CARD: one persistent element outside the scenes. data-show="0-3 top wide|3-7.4 bottom polaroid|10.4-12.7 full"
    positions: top · center · bottom · full; shapes: wide (rounded 16:10 card) · polaroid (white photo frame, portrait) */
 .facecard{position:absolute;left:50%;z-index:4;visibility:hidden;transform:translateX(-50%);pointer-events:none}
@@ -133,7 +133,7 @@ mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;colo
 .scene.f-bottom{padding-bottom:97rem!important}
 .scene.f-top.f-wide{padding-top:86rem!important}.scene.f-top.f-polaroid{padding-top:99rem!important}
 .scene.f-full .l1,.scene.f-full .l2{color:#fff;text-shadow:0 .3rem 1.6rem rgba(0,0,0,.55)}
-/* SUBTITLE caption (DfCwrlZz5jz): one line under the media, Poppins, keyword in a yellow box that sweeps in */
+/* SUBTITLE caption: one line under the media, Poppins, keyword in a yellow box that sweeps in */
 .sub{position:absolute;left:0;right:0;top:134rem;display:grid;place-items:center;z-index:5;pointer-events:none}
 .sub .line{grid-area:1/1;visibility:hidden;max-width:66rem;text-align:center;font:600 5rem/1.25 Poppins,var(--sans);letter-spacing:-.025em;color:var(--ink)}
 .sub .k{position:relative;display:inline-block;padding:0 .14em;z-index:0}
@@ -150,7 +150,7 @@ mark{background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 60%/0% 82%;colo
 .person .nm{background:#fff;border-radius:1.2rem;padding:1.2rem 2.4rem;font:700 3.4rem/1 var(--sans);box-shadow:0 .8rem 2rem rgba(0,0,0,.1)}
 
 /* ======================= STORY edit style (v2.2, 2026-11-15; story.html) =======================
-   From the @hilzuckerman reel (ref/README.md): the creator stays FULL SCREEN on the Edits main track and the overlay
+   The creator stays FULL SCREEN on the Edits main track and the overlay
    adds everything else. Page modes:
      .scene.story  transparent page: the face shows through; captions at chest height, HUD/pills/labels at the top
      .scene.blur   the timeline-aligned face (video.face) blurred + dimmed behind a big text stack (opaque page)
@@ -169,7 +169,7 @@ video.under{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-ind
 .scene.blur{background:#1b1714}
 .scene.blur video.face{filter:blur(calc(var(--b,1)*2.8rem)) brightness(calc(1 - var(--b,1)*.48)) saturate(.9);transform:scale(1.08)}
 .scene.bw video.face{filter:grayscale(1) contrast(1.06) brightness(1.02)}
-/* story title (Hil-style hook): small white line + one huge butter word, on a soft top vignette */
+/* story title (hook): small white line + one huge butter word, on a soft top vignette */
 .title.pop{top:14rem}
 .title.pop::before{content:'';position:absolute;left:-10rem;right:-10rem;top:-16rem;height:44rem;z-index:-1;
   background:radial-gradient(ellipse 64% 52% at 50% 46%,rgba(0,0,0,.6),transparent 74%)}

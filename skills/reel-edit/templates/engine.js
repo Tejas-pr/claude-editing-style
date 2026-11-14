@@ -21,14 +21,14 @@
      .note[data-in] > svg path ......... hand-drawn arrow/underline draws on (path needs pathLength="1")
      video[data-src][data-in][data-from] B-roll inside a card, seeked frame-exact
      .hole ............................. where the creator shows through (transparent with ?alpha=1)
-   SMOOTH MOTION (v3, 2026-11-15, from @motionthekx DctTp5ay2Pa): every entry eases (expo out) with a motion blur that
+   SMOOTH MOTION (v3, 2026-11-15): every entry eases (expo out) with a motion blur that
    clears as it lands; headline words rise out of a blur; scenes WITHOUT a creator window hand over with a 0.3 s blur
    dissolve (data-exit="cut" to opt out) and drift in slowly (data-drift=".02", 0 = off); camera moves:
      .scene[data-cam="t scale x% y% [dur]|…"] ... eased push-in to a point (e.g. the highlighted line of a screenshot)
      .roll[data-in][data-ts="t1,t2"] > span ..... word roller: the active word sharp, neighbours blurred (Motion/Design/Ideas)
      .hlbox[data-t] ............................. highlighter sweep over an IMAGE (real screenshot), placed in % of the card
      data-anim = pop · rise · slide · drop · fade · blur (scale + defocus in) · zoom · none
-   FACE CARD (paper v3.1, striver DFr8xtCTCap): ONE persistent polaroid at the bottom, outside the scenes:
+   FACE CARD (paper v3.1): ONE persistent polaroid at the bottom, outside the scenes:
      <div class="facecard" data-show="0-7.4,12.7-14.6"><div class="hole"></div></div>   (fades 0.3 s in/out)
      The paper above dissolves page to page while the face window stays still (one Edits transform per segment).
      .scene.face = creator full screen (hole inset 0, hard cut); scenes with .wf keep their content above the card.
@@ -88,7 +88,7 @@ const facecards = [...document.querySelectorAll('.facecard[data-show]')].map(f =
 // each scene learns where the face is when it starts (f-top / f-center / f-bottom / f-full / f-none) to lay out its content
 document.querySelectorAll('.scene').forEach(sc => { const t = +sc.dataset.in + .05; let pos = 'none';
   facecards.forEach(({ seg }) => seg.forEach(g => { if (t >= g.a && t < g.b) pos = g.pos; })); sc.classList.add('f-' + pos); if (pos !== 'none') sc.classList.add('f-' + (facecards[0].seg.find(g => t >= g.a && t < g.b) || {}).shape); });
-// subtitle captions (striver DfCwrlZz5jz): a line under the media, words appear as spoken, keyword* in a yellow box
+// subtitle captions : a line under the media, words appear as spoken, keyword* in a yellow box
 document.querySelectorAll('.sub[data-words]').forEach(el => { const W = parse(el.dataset.words), max = +(el.dataset.max || 5), ch = []; let cur = [];
   W.forEach(x => { cur.push(x); if (/[.,!?:;]$/.test(x.w) || cur.length >= max) { ch.push(cur); cur = []; } }); if (cur.length) ch.push(cur); el.innerHTML = '';
   ch.forEach((c, i) => { const d = document.createElement('div'); d.className = 'line'; d.dataset.t = c[0].t; d.dataset.e = i + 1 < ch.length ? ch[i + 1][0].t - .02 : (+el.dataset.end || 1e9);

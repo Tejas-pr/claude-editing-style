@@ -1,6 +1,7 @@
 ---
 id: cap-05
-name: sub
+name: Marker
+preset: sub
 kind: caption-style
 css: templates/captions/(built into the template)
 default_size: 5rem

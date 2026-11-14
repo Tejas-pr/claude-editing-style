@@ -1,5 +1,5 @@
 /* Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) */
-/* Caption style "pop-serif" (STYLE 3, added 2026-11-15 from the @hilzuckerman reel DfWHPChtG_d; see ref/README.md).
+/* Caption style "pop-serif" (cap-03, 2026-11-15).
    Poppins Bold (OFL, Google Fonts), white, tight tracking, soft shadow, NO band and NO outline; one word at a time
    at chest height. The keyword (word* in data-words) switches font: Instrument Serif ITALIC in butter yellow, a bit
    bigger. Warm, personal, "creator talking to you" look. Made for the story edit style (story.html), works on split too.
@@ -11,8 +11,8 @@
 /* on light paper pages (split .full) the white word would vanish: ink words, rust keyword */
 .scene.full .seam .chunk{color:var(--ink);text-shadow:none}
 .scene.full .seam .k{color:var(--rust)}
-/* ---- on PAPER pages (paper.html headline): the "small part" of the Hil look, matched to striver.tech ----
-   l1 = Poppins 600 ink (the small setup line); l2 = Instrument Serif ITALIC, big and light (striver's italic), with the
+/* ---- on PAPER pages (paper.html headline): a light editorial headline ----
+   l1 = Poppins 600 ink (the small setup line); l2 = Instrument Serif ITALIC, big and light , with the
    keyword (word* in data-words) in the accent colour. Set --kwc per reel (blue default; red for bad news, green for good). */
 :root{--kwc:#2747b8}
 .l1{font-family:Poppins,Inter,sans-serif;font-weight:600;letter-spacing:-.03em;font-size:4.6rem}

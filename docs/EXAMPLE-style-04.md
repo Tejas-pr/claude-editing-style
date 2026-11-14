@@ -3,7 +3,7 @@
 The sample reel (git reflog) used in `styles/style-04.png`. Run from a reel folder that holds `doc-reflog.png` (made with `scripts/source_shot.mjs`) and `face.mp4`.
 
 ```python
-# style-04 SAMPLE (striver paper + smooth motion + moving face card), ~14.6 s. Silent motion; face = placeholder footage.
+# style-04 SAMPLE (paper pro + smooth motion + moving face card), ~14.6 s. Silent motion; face = placeholder footage.
 #   python3 -I build.py && node $SK/scripts/render.mjs motion.html motion.mov --alpha   (prints the face-window changes)
 import sys, os
 SK = os.environ.get("REEL_EDIT_SKILL", "<plugin>/skills/reel-edit"); sys.path.insert(0, SK + "/scripts"); from reel_lib import *

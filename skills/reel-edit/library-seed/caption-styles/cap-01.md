@@ -1,6 +1,7 @@
 ---
 id: cap-01
-name: serif-band
+name: Velvet
+preset: serif-band
 kind: caption-style
 css: templates/captions/serif-band.css
 default_size: 11rem

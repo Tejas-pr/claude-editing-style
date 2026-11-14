@@ -1,6 +1,7 @@
 ---
 id: script-03
-name: News in 30 s
+name: Flash
+aka: News in 30 s
 kind: script-style
 source: built-in
 ---

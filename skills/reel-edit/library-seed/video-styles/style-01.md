@@ -1,6 +1,7 @@
 ---
 id: style-01
-name: Kallaway split
+name: Duet
+aka: split card
 kind: video-style
 template: split.html
 default_caption: serif-band

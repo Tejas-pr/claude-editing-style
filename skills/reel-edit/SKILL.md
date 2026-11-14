@@ -9,6 +9,14 @@ description: Edit short vertical videos (Instagram Reels, TikTok, YouTube Shorts
 lives in their project: `./reel-library/` (created by `/editing-style:setup`, see `library-seed/`). Each reel gets its
 own folder `./reels/<date>-<slug>/` (build.py, motion.html, screenshots, CREDITS.md, renders).
 
+## One-line use
+`/editing-style:edit <video|none> [style] [captions] [script] [edits|local] [9:16|16:9|1:1] [notes]` — names or ids:
+styles **duet · ink · glow · folio · echo** (style-01…05), captions **velvet · volt · silk · heritage · marker**
+(cap-01…05), scripts **turn · twice · flash**. Ask only for what's missing. `template("folio")` and
+`assemble(..., captions="silk", aspect="16:9")` accept the names. 16:9 renders: `render.mjs --w 3840 --h 2160`.
+Music: Edits library downloads can fail (DownloadError 3) — use royalty-free tracks only for public videos, and if the
+download fails tell the user to drop the bed in by hand (don't loop on retries).
+
 ## Fast path
 0. **Ask first, every time (AskUserQuestion dialog; never assume the last reel's answers).** Read `reel-library/`
    (video-styles/, caption-styles/, script-styles/, reel-ideas/, brand.md) and offer, in one dialog of up to 4 questions:
@@ -63,13 +71,13 @@ own folder `./reels/<date>-<slug>/` (build.py, motion.html, screenshots, CREDITS
   the **panel only**, so the creator window stays put.
 - Every element: `data-in` + `data-anim` (pop · rise · fade · slide · drop · none) timed to the word that names it.
 
-## style-03 Hil story (story.html)
+## style-03 Full-face story (story.html)
 Creator full screen the whole time; overlay pages `.scene.story` (one-word `pop-serif` chest captions + one top element),
 `.blur` (face blurred behind a big stack; needs `face_cut()`), `.bw`, `.card` (step cards, `.pad` legal pad), `.media`.
 The template header documents every component; see `styles/style-03.png`. Check sheets with `--under face-cut.mp4`.
 
 ## style-04 / style-05: Paper v3 + moving face card (paper.html)
-**Face card** (one persistent element outside the scenes, striver Dfr8xtCTCap / DfCwrlZz5jz):
+**Face card** (one persistent element outside the scenes):
 `<div class="facecard" data-show="0-2.7 bottom polaroid|2.7-4.9 top wide|4.9-7.4 bottom polaroid|10.4-12.7 full|12.7-14.6 bottom polaroid"><div class="hole"></div></div>`
 Positions `top · center · bottom · full`, shapes `polaroid` (white photo frame) · `wide` (rounded 16:10). A gap = no face
 (use it for the page with the real screenshot). It fades in/out only where it appears/leaves; between touching segments
@@ -80,15 +88,15 @@ media (top 134rem), keyword in a yellow box that sweeps in; white on `f-full` pa
 **Highlights on screenshots:** `.hlbox` yellow, `.hlbox.inv` black box with white text; `.srcline` under the card;
 `.person` = B&W tilted photo + name.
 
-## Paper v3 look and motion (style-02/04/05), refs @striver.tech DfuMZKhBky9 + @motionthekx DctTp5ay2Pa (`docs/REFERENCES.md`)
-**Look (keep it like striver.tech):** warm grid paper; at the top a small sans line + a big italic line (the spoken
+## Paper v3 look and motion (style-02/04/05)
+**Look:** warm grid paper; at the top a small sans line + a big italic line (the spoken
 words, building as they're said; the next big word ghosts in grey first); under it ONE proof at a time, big and
 centred: a **real screenshot** (tweet, IG post, article paragraph, status page) on a white card with a yellow
 highlighter sweep on the key phrase, a name label under people/tweets (`.tagline`), a date pill (`.datepill`), a
 headline card, a count-up, bars, icons. Creator face (optional) in the `.polaroid` at the start/end.
 **Captions** (`captions="pop-serif"`, default on paper): `.l1` Poppins 600 + `.l2` Instrument Serif italic 12rem;
 the keyword (`word*`) in `--kwc` (blue #2747b8 default; set red for bad news, green for good via `css=":root{--kwc:…}"`).
-That's the only part of the Hil look we keep on paper. `captions="classic"` = v2 (Inter + Playfair bold italic).
+`captions="classic"` = v2 (Inter + Playfair bold italic).
 **Smooth motion** (engine v3, automatic):
 - entries ease out (expo) and **come out of a blur**; `data-anim` = `blur` (defocus + scale in, best for screenshots),
   `rise`, `pop`, `slide`, `zoom`, `fade`, `none`. Headline words rise out of a blur; big words ghost, then sharpen.
@@ -101,7 +109,7 @@ That's the only part of the Hil look we keep on paper. `captions="classic"` = v2
 - **word roller** `.roll[data-ts]` (`.serif` for italic): a list where the spoken item rolls into focus and the others
   blur (3 things, before/after, names). Punch-ins: `data-zoom="t,t"` still works (+7% each).
 - Pages with a creator window (`.hole`) keep hard cuts and no camera (the Edits transforms need a fixed window).
-**Rhythm (striver):** a new proof every 2 to 3 s, the headline changes with each sentence, highlighter lands on the
+**Rhythm:** a new proof every 2 to 3 s, the headline changes with each sentence, highlighter lands on the
 spoken phrase, nothing on screen that isn't being said.
 
 ## Real source screenshots (scripts/source_shot.mjs): every claim shows its source
@@ -120,7 +128,7 @@ node $SK/scripts/source_shot.mjs "<url>" <reel folder>/x.png --sel "css selector
   still ask the user. Log every shot (URL + date taken) in `<reel folder>/CREDITS.md`. Paywalled or login-only pages: ask the user for a
   screenshot. Never fake a tweet: if the real one can't be shot, use a quote card with the source line.
 
-## Storytelling: the "moment → cost → turn → action" arc (from @hilzuckerman DfWHPChtG_d; use it in every explainer)
+## Storytelling: the "moment → cost → turn → action" arc (use it in every explainer)
 The reel makes a boring topic (organising a camera roll) gripping. 6.3K sends on 10.9K likes: people forwarded it.
 Why it holds (2 min 23 s of retention):
 1. **Hook = promise + "even yours"** (0 to 10 s): title on frame 1 ("How to make boring content *addictive*"),
