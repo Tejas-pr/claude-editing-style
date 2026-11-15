@@ -11,7 +11,7 @@ own folder `./reels/<date>-<slug>/` (build.py, motion.html, screenshots, CREDITS
 
 ## One-line use
 `/editing-style:edit <video|none> [style] [captions] [script] [edits|local] [9:16|16:9|1:1] [notes]` — names or ids:
-styles **duet · ink · glow · folio · echo** (style-01…05), captions **velvet · volt · silk · heritage · marker**
+styles **duet · ink · glow · folio · echo · skit** (style-01…06), captions **velvet · volt · silk · heritage · marker**
 (cap-01…05), scripts **turn · twice · flash**. Ask only for what's missing. `template("folio")` and
 `assemble(..., captions="silk", aspect="16:9")` accept the names. 16:9 renders: `render.mjs --w 3840 --h 2160`.
 Music: Edits library downloads can fail (DownloadError 3) — use royalty-free tracks only for public videos, and if the
@@ -20,7 +20,8 @@ download fails tell the user to drop the bed in by hand (don't loop on retries).
 ## Fast path
 0. **Ask first, every time (AskUserQuestion dialog; never assume the last reel's answers).** Read `reel-library/`
    (video-styles/, caption-styles/, script-styles/, reel-ideas/, brand.md) and offer, in one dialog of up to 4 questions:
-   - **Video style**: the library's `video-styles/*.md` (built-ins style-01 … style-05, see `STYLES.md` + `styles/*.png`).
+   - **Video style**: the library's `video-styles/*.md` (built-ins style-01 … style-06, see `STYLES.md` + `styles/*.png`;
+     style-06 Skit = a re-acted trending sound, no motion page: see "style-06 Skit").
    - **Caption style** + size: `caption-styles/*.md` (cap-01 … cap-05). Default = the video style's default.
    - **Script style** (if a script is needed): `script-styles/*.md` (e.g. moment→cost→turn→action, double tap, news).
    - **Output**: Edits app (needs the `metapilot-native` MCP connected) or local render (Chrome + ffmpeg).
@@ -167,6 +168,41 @@ headline line ("so what?") or a `.bubble`; the strike-through = `.strike[data-t]
 "I thought the problem was [what everyone blames]. It was [what I found]." · "Tonight, take 5 minutes and [one action]."
 Keep our length rule (25 to 45 s for news): use 1 to 2 steps + meter, or post the full 4-step version as a 60 to 90 s
 "framework" reel (the long version works when every 2 to 4 s has something new).
+
+## style-06 Skit: re-act a trending sound (lip-sync meme / funny skit)
+For a take that re-acts someone else's trending sound (a POV skit, a lip-sync meme). No motion page: the take, the
+original sound, a title, close-up punch-ins and emoji reactions. Example plan: the docstring of `scripts/skit_sync.py`
+(a 13.6 s "Hi, I'm the founder" POV skit).
+**Why it needs its own method:** the take is the actors' own voices, so waveform sync is impossible, and one offset never
+fits (actors are faster or slower than the sound). Match MOMENTS, give each piece between them its own speed.
+1. **Map the ref** (view only, never download the video): open the post in the browser, seek the `<video>` frame by frame
+   and diff 36x64 canvas thumbnails → every cut (`diff > 12`). Note the title (text, place, how long), close-up
+   ping-pongs, where the payoff line sits, and the end card (never copy their brand card).
+2. **Anchors** (take time → sound time). Words: Edits `transcribeClip` on the take clip AND on the sound's library
+   `aliasId`. Beats: `skit_sync.py levels SOUND --from a --to b` (hits list). Hands / mouth: `skit_sync.py motion TAKE
+   --box x,y,w,h` (peaks, and "still" = frozen poses). Count the hits on both sides: e.g. the take's 4 RPS hits 0.32 s
+   apart vs the sound's 4 beats 0.40 s apart → 0.8x lands all four.
+3. **Plan:** `skit_sync.py plan skit.json` → pieces with speeds. Keep moving/talking pieces at **0.7 to 1.3x**. Put stretch
+   on **still holds** (slow-mo is invisible on a frozen pose) or **cut the sound in a quiet gap** (both edges ≤ −40 dB;
+   `levels` shows where). Never 0.5x on movement: it looks choppy on 30 fps footage.
+4. **Close-ups** from the wide 4K take: 2x crop (1080x1920 of 2160x3840, slight upscale at 2K, say so), face at 35% from
+   the top; a 4-shot ping-pong (him / her / him / her, ~0.3 s each) on the held sound. Reuse the "stare" frames;
+   reusing take time already shown in the wide is fine at a different framing.
+5. **Edits:** `splitAt` the take at the plan's cuts, delete unused, `setSpeed` per piece, close-ups `setTransform
+   {scale:2, x:0.5+(0.5-fx)*2, y:0.5+(0.5-(fy+0.075))*2, keyframes:"clear", allowBeyondCanvas:true}`, `setVolume 0` on every
+   take piece. Sound on its own track: `splitAt` the sound at the cut, delete the gap, `move` the rest back, extend its
+   end with `trimClip side:end delta:-N` (**negative = longer, positive = shorter**).
+6. **Text:** the ref's title on the first shot (white Helvetica Neue size 24, two balanced lines, y 0.2). Reactions as
+   emoji texts: font `IGUIBetav9-Heavy` size 30, `setTransform scale 1.65` beside the face (🤡 on the stare close-ups,
+   😭 on the loser's punch-in).
+7. **Export** 2K High → `finish-export.sh` (the raw Edits export of a hot meme sound clipped at +0.17 dBTP). Edits
+   exports at the project rate (60 fps) whatever you set.
+8. **Posting:** if the creator wants Instagram's original audio (to ride the trend), the sound must be uncut from 0:00;
+   any sound cut means posting with the baked-in audio. Credit the ref creator in the caption ("Video inspo").
+**Gate (Skit):** title readable at frame 1 · payoff line lips within ±0.1 s on the key words · beat hits within ±0.05 s ·
+no speed < 0.7 on movement · no black frame or silent tail at the end · −14 LUFS.
+**Working with the creator live:** they may edit the same Edits timeline while you work. Re-read `elements` before every
+change, never revert their edits (build on them), and if pieces move under you, stop and ask who drives.
 
 ## reel_lib.py (scripts/)
 ```python

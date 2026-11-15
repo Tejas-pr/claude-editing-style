@@ -7,6 +7,7 @@
 | style-03 | video-style | Story (full-screen face) | face full screen, one-word chest captions (Poppins + serif-italic butt… | built-in |
 | style-04 | video-style | Folio (paper pro, default) | grid paper, small Poppins line + big Instrument Serif italic line (key… | built-in |
 | style-05 | video-style | Echo (paper subtitles) | style-04 pages with one subtitle line under the media, keyword in a ye… | built-in |
+| style-06 | video-style | Skit (funny skit / re-acted sound) | your take timed to a trending sound piece by piece, 2x close-up ping-p… | built-in |
 | cap-01 | caption-style | Velvet (serif-band) | Instrument Serif on a soft dark band, keyword yellow italic | built-in |
 | cap-02 | caption-style | Volt (anton-caps) | Anton caps with a heavy outline, keyword yellow | built-in |
 | cap-03 | caption-style | Silk (pop-serif) | Poppins line + Instrument Serif italic keyword (paper headline); one-w | built-in |

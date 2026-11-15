@@ -7,5 +7,7 @@ Update the user's reel library from this plugin's `skills/reel-edit/library-seed
    then restart Claude Code. (Or `/plugin` → Marketplaces → update.)
 2. Compare `library-seed/` with `./reel-library/`: copy every seed card (video-styles, caption-styles, script-styles,
    previews) whose **id doesn't exist yet**. Never overwrite or delete the user's cards; if a built-in card changed
-   (same id, different content), save the new one next to it as `<id>.new.md` and say so.
+   (same id, different content), save the new one next to it as `<id>.new.md` and say so. If the id is taken by one of
+   the user's OWN cards (`source:` not built-in, e.g. their /build style-06), copy the built-in under the next free
+   number instead, keep its name (e.g. "skit") so the name still works, and tell the user the new id.
 3. Rebuild `reel-library/INDEX.md` (built-ins + the user's own cards) and show what's new (read the plugin's CHANGELOG.md).

@@ -3,6 +3,16 @@
 New styles land here first. Update with `claude plugin marketplace update claude-editing-style` and
 `claude plugin update editing-style@claude-editing-style`, then run `/editing-style:update` in your project.
 
+## 1.3.0 — 2026-11-15
+- **New style: Skit (style-06)** · `/editing-style:skit` — funny skits and lip-sync memes on a trending sound. Your take
+  is your own voices, so it matches moments instead of waveforms: words, beat hits and hand hits become anchors, and
+  each piece between them gets its own speed. Close-up ping-pong punch-ins, 🤡 / 😭 emoji reactions, sound cuts only
+  in quiet gaps, slow-mo only on still holds. Works in the Edits app or with a local render.
+- New `scripts/skit_sync.py`: `levels` (beat hits in the sound), `motion` (hand / mouth hits and still poses in the take),
+  `plan` (speeds per piece from anchor pairs, flags anything outside 0.7–1.3x), `render` (local cut with close-ups + sound).
+- Your own `/build` styles now start at **style-07**. `/update` never overwrites a user card that already uses a
+  built-in id: the built-in goes to the next free number and keeps its name.
+
 ## 1.2.0 — 2026-11-15
 - **Sound on every moment:** `sfx_cues.py` reads the motion page and lists every cue (page cuts, popups, pills,
   typing, highlights, count hits) with the matching Edits catalogue sound; local renders mix your `reel-library/sfx/`

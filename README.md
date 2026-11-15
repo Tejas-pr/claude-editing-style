@@ -32,7 +32,7 @@ styles**, **caption styles** and **script styles** for Reels / Shorts / TikTok, 
    * **Video style idea** — the editing style to learn (layout, motion, where your face sits)
 
    It studies each link frame by frame in the browser (it never downloads anyone's video), turns it into concrete
-   rules, renders a test, and **saves it as a numbered card** (`style-06`, `cap-06`, `script-04`, `idea-01` …) in
+   rules, renders a test, and **saves it as a numbered card** (`style-07`, `cap-06`, `script-04`, `idea-01` …) in
    `./reel-library/`. Nothing is overwritten; your library grows.
 2. **You edit** (`/editing-style:edit my-recording.mov`): Claude opens a dialog — *which video style? which caption
    style? which script style? Edits app or local render?* — then cuts your pauses, speeds you up, builds the motion
@@ -48,9 +48,10 @@ styles**, **caption styles** and **script styles** for Reels / Shorts / TikTok, 
 | **style-03** | **Glow** · full-face story | you full screen; blur pages, colour step cards, score meter, legal-pad recap | ![](skills/reel-edit/styles/style-03.png) |
 | **style-04** | **Folio** · paper pro *(default)* | paper headline + **real screenshots** with highlighter, **smooth motion**, your face in a card that moves (bottom / top / center / full / hidden) | ![](skills/reel-edit/styles/style-04.png) |
 | **style-05** | **Echo** · paper subtitles | style-04 with one subtitle line under the media, keyword in a yellow box | ![](skills/reel-edit/styles/style-05.png) |
+| **style-06** | **Skit** · funny skit | re-act a trending sound: your take timed to it piece by piece (words, beats, hand hits), 2x close-up ping-pong, 🤡 😭 reactions, no motion page | ![](skills/reel-edit/styles/style-06.png) |
 
 Each style has its own command: **`/editing-style:duet`**, **`/editing-style:ink`**, **`/editing-style:glow`**,
-**`/editing-style:folio`**, **`/editing-style:echo`** (followed by your video path) — or pick in the `/editing-style:edit` dialog.
+**`/editing-style:folio`**, **`/editing-style:echo`**, **`/editing-style:skit`** (followed by your video path) — or pick in the `/editing-style:edit` dialog.
 
 Caption styles: **Velvet** (`cap-01`, serif on a dark band) · **Volt** (`cap-02`, bold outlined caps) · **Silk**
 (`cap-03`, Poppins + serif-italic keyword) · **Heritage** (`cap-04`, classic bold italic) · **Marker** (`cap-05`,
@@ -161,7 +162,7 @@ and an honest **SHIP / FIX FIRST / RE-RECORD** verdict.
 | `/editing-style:library` | list every saved style, caption, script and idea with previews |
 | `/editing-style:edit <video> [style] [captions] [script] [edits\|local] [notes]` | one-line edit; only missing choices are asked |
 | `/editing-style:update` | pull new built-in styles into your library (after updating the plugin) |
-| `/editing-style:duet` · `:ink` · `:glow` · `:folio` · `:echo` `<video>` | the same edit with that style already chosen |
+| `/editing-style:duet` · `:ink` · `:glow` · `:folio` · `:echo` · `:skit` `<video>` | the same edit with that style already chosen |
 | `/editing-style:reel-edit` | the skill itself (also loads automatically when you ask Claude to edit a reel) |
 
 (If no other plugin uses the same names, Claude Code also accepts the short forms like `/build` and `/edit`.)
@@ -230,7 +231,7 @@ library and **your own cards are never touched**. Want to add a style to the plu
 reel-library/
   INDEX.md                 one line per card; the edit dialog reads this
   brand.md                 handle, accent colour, default ask, SFX/music folders
-  video-styles/  style-01 … style-05 (built-in), style-06+ (yours, from /build) + preview PNGs
+  video-styles/  style-01 … style-06 (built-in), style-07+ (yours, from /build) + preview PNGs
   caption-styles/ cap-01 … cap-05, cap-06+ (+ .css when it's a new look)
   script-styles/  script-01 … script-03, script-04+
   reel-ideas/     idea-01+ (link, what to copy, what not to copy, why it works)
