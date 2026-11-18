@@ -44,7 +44,12 @@ screenshot** · **5. target length**. Never assume last reel's answers. Show the
 1. Render `motion.mov --alpha`; it prints every face-window change `time {x,y,w,h}` (null = hidden).
 2. Edits: `addMedia face.mp4` (main track), `addOverlay motion.mov` (0, .5, .5, 1), `splitAt` the face clip at every change.
 3. `setTransforms` per piece (f = face centre height in the raw frame, about 0.30 for a seated face cam; fx = face x):
-   - polaroid (w .5505, h .3409, centre y .6875): **scale 0.62, x 0.525, y 0.774** (head + shoulders)
+   - polaroid (w .5505, h .3409; centre y .6875 bottom, .3177 top): **scale 0.56, x 0.5, y = centre − (fy − 0.5)×0.56**
+     with fy = the frame height you want centred (≈ 0.555 for a phone face cam: hair at ≈ 0.30, chest at ≈ 0.85), so
+     **bottom y 0.657, top y 0.287**. Shows the whole head and shoulders. The old 0.62 / y .774 recipe cut the hair;
+     x must stay 0.5 at 0.56 or the card shows an edge.
+   - **Prefer polaroid over wide top for face pages:** a 9:16 face cannot fill the 16:10 wide card without cropping the
+     chin or forehead. Use `top polaroid` when the face must sit on top.
    - wide top (w .8148, h .2865, centre y .2839): scale = w×1.04 = 0.847, x 0.5, y = 0.2839 + (0.5 − f)×0.847
    - full: scale 1, x .5, y .5 · hidden pieces: anything (the paper covers them)
    Always check the scaled video still covers the window: x ± scale/2 must contain hole.x ± w/2.

@@ -3,6 +3,14 @@
 New styles land here first. Update with `claude plugin marketplace update claude-editing-style` and
 `claude plugin update editing-style@claude-editing-style`, then run `/editing-style:update` in your project.
 
+## 1.3.1 — 2026-11-18
+- **Face card fix (style-04/05):** new polaroid transform (scale 0.56, x 0.5, bottom y 0.657 / top y 0.287) shows the
+  whole head and shoulders; the old one cut the hair. Prefer a top polaroid over the wide top card for faces.
+- **Pace check before speed-up:** measure words per second after the pause cut; fast talkers stay at 1.0x.
+- **Export:** the folder must exist, export raw → loudness pass → delete the raw (Edits' raw export can clip).
+- New lessons: one take per reel, cutout off on busy backgrounds, full-face headline layering, live timeline edits,
+  fewer sounds (about half the cues), `seek` failures. Stickers instead of emojis on motion pages; caption rules.
+
 ## 1.3.0 — 2026-11-15
 - **New style: Skit (style-06)** · `/editing-style:skit` — funny skits and lip-sync memes on a trending sound. Your take
   is your own voices, so it matches moments instead of waveforms: words, beat hits and hand hits become anchors, and
