@@ -1,0 +1,255 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Created by Tejas — https://github.com/Tejas-pr/claude-editing-style (Apache-2.0; keep this notice, see NOTICE) -->
+<!-- style-07 BOARD (16:9, 1920x1080 frame): warm grid paper and the footage ALWAYS on screen as a white-framed card that
+     moves between layouts per page: big (talking) · chaos (medium + a pile of notifications that shakes) · corner (small;
+     app / website screens fill the frame and zoom into a highlighter sweep) · side (a comment card types the ask word) ·
+     end (logo + name + tagline + url + ask). Hook sticker on frame 1, emoji riding on the card, a full-screen brand sting,
+     a stamp, a corner badge. Captions: cap-01 … cap-05 (CFG.captions or ?cap=), size CFG.size or ?cs=.
+     Everything brand-specific comes from CFG.brand. scripts/board_build.py fills CFG from a spec.json.
+     Render: node render.mjs motion.html out.mp4 --w 1920 --h 1080 [--face face-cut.mp4]   (3840x2160 also works: the
+     page zooms to the render width). -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700;1,800&family=Poppins:wght@500;600;700;800&family=Caveat:wght@700&display=block" rel="stylesheet">
+<style>
+:root{--accent:#D8ACAC;--deep:#a85f66;--ink:#1d1416;--paper:#f7f1e8;--hl:color-mix(in srgb,var(--accent) 75%,transparent);--kwlight:#f4b9b0;--wmfont:'Playfair Display',serif;--cs:1}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--paper);font-family:Inter,sans-serif}
+#paper{position:absolute;inset:0;background:var(--paper);
+  background-image:linear-gradient(rgba(90,60,50,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(90,60,50,.075) 1px,transparent 1px);background-size:44px 44px}
+#paper::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 100% at 50% 40%,transparent 60%,rgba(120,80,60,.12))}
+/* the footage card */
+#cam{position:absolute;background:#fff;padding:12px;border-radius:20px;box-shadow:0 26px 60px rgba(70,40,30,.28),0 2px 0 rgba(0,0,0,.04);will-change:transform}
+#cam .win{position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;background:#222}
+#cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#cam .tape{position:absolute;left:50%;top:-16px;width:150px;height:34px;transform:translateX(-50%) rotate(-3deg);background:var(--accent);opacity:calc(var(--tape,0)*.7)}
+/* info area */
+.info{position:absolute;opacity:0}
+.tagpill{display:inline-flex;align-items:center;gap:10px;font:800 26px Poppins;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);background:#fff;border:3px solid var(--ink);border-radius:40px;padding:6px 20px;box-shadow:4px 4px 0 var(--ink)}
+.shotcard{position:absolute;background:#fff;border-radius:18px;box-shadow:0 22px 50px rgba(70,40,30,.22);overflow:hidden}
+.shotcard .bar{height:36px;background:#f1e9e4;display:flex;align-items:center;gap:8px;padding-left:16px}
+.shotcard .bar i{width:11px;height:11px;border-radius:50%;background:#dcc5bf}
+.shotcard .bar span{margin-left:12px;font:600 15px Inter;color:#9b7b78;background:#fff;border-radius:8px;padding:4px 12px}
+.shotcard .bar span:empty{display:none}
+.shotcard .view{position:absolute;left:0;top:36px;right:0;bottom:0;overflow:hidden}
+.shotcard .inner{position:absolute;left:0;top:0;transform-origin:0 0}
+.shotcard img{display:block;width:100%;height:auto}
+.shotcard .hl{position:absolute;background:var(--hl);mix-blend-mode:multiply;border-radius:6px;transform-origin:0 50%}
+.demo{position:absolute;right:12px;bottom:10px;font:700 14px Inter;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(29,20,22,.72);padding:5px 10px;border-radius:7px}
+/* notifications */
+.note{position:absolute;display:flex;align-items:center;gap:20px;width:700px;background:#fff;border-radius:22px;padding:16px 24px;box-shadow:0 14px 34px rgba(70,40,30,.25);border:3px solid var(--ink);opacity:0}
+.note .ic{font-size:60px}.note b{display:block;font:800 38px Poppins;color:var(--ink)}.note span{font:600 28px Inter;color:#8a6d6a}
+.note .tag{margin-left:auto;font:800 24px Inter;color:#fff;background:#e0525a;border-radius:20px;padding:5px 12px}
+/* emoji / sticker riding on the cam card (x%, y% of the card) */
+.emo{position:absolute;font-size:110px;line-height:1;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 14px rgba(0,0,0,.3));z-index:5}
+.emo img{width:130px;height:auto;display:block}
+.emo small{position:absolute;left:50%;top:112%;transform:translateX(-50%);white-space:nowrap;font:800 28px Poppins;color:#fff;background:var(--ink);padding:5px 14px;border-radius:10px}
+/* sting / stamp / badge / comment / end */
+#sting{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;z-index:20}
+#sting .bg{position:absolute;inset:0;background:var(--paper);background-image:linear-gradient(rgba(90,60,50,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(90,60,50,.075) 1px,transparent 1px);background-size:44px 44px}
+#sting .wrap{position:relative;display:flex;align-items:center;gap:34px}
+#sting img{width:290px;height:auto}
+.wm{font-family:var(--wmfont);font-weight:700;letter-spacing:-.025em;color:var(--ink);line-height:1}
+#sting .word{font-size:170px}
+#sting svg{position:absolute;right:0;bottom:-26px;width:560px;height:60px;overflow:visible}
+#stamp{position:absolute;opacity:0;display:flex;align-items:center;gap:14px;background:#fff;padding:12px 32px 12px 18px;border-radius:22px;border:4px solid var(--ink);box-shadow:6px 6px 0 var(--ink);z-index:6;font-size:80px}
+#stamp img{height:92px;width:auto}
+#bug{position:absolute;right:34px;top:26px;display:flex;align-items:center;gap:8px;background:#fff;border-radius:40px;padding:6px 22px 6px 12px;opacity:0;z-index:7;box-shadow:0 8px 20px rgba(70,40,30,.18);font-size:36px}
+#bug img{height:52px;width:auto}
+.nologo img{display:none}
+#comment{position:absolute;width:700px;background:#fff;border-radius:26px;padding:24px 28px;border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);opacity:0}
+#comment .who{display:flex;align-items:center;gap:14px;font:700 26px Inter;color:#333}
+#comment .who i{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#f6c,#fc6)}
+#comment .box{margin-top:16px;border:3px solid #eee;border-radius:40px;padding:14px 24px;font:800 56px Poppins;color:#111;min-height:88px}
+#comment .box .cur{display:inline-block;width:4px;height:52px;background:#111;vertical-align:-6px;margin-left:4px}
+#comment .dm{margin-top:14px;font:700 28px Inter;color:#8a6d6a;opacity:0}
+#end{position:absolute;left:700px;top:150px;width:1120px;opacity:0;text-align:left}
+#end .brand{display:flex;align-items:center;gap:24px}
+#end .brand img{height:220px;width:auto}
+#end .name{font-size:170px}
+#end .tag{font:600 40px Inter;color:#5b4543;margin-top:16px}
+#end .row{display:flex;gap:20px;margin-top:30px;align-items:center}
+#end .url{font:800 46px Poppins;color:var(--ink);background:var(--accent);padding:10px 28px;border-radius:16px;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+#end .url:empty,#end .ask:empty,#end .tag:empty{display:none}
+#end .ask{font:800 40px Poppins;color:var(--ink)}
+#hook{position:absolute;z-index:9;background:#fff;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);border-radius:20px;padding:14px 30px 18px;transform-origin:0 0;opacity:0}
+#hook .l1{font:700 30px Poppins;color:#6d5250}
+#hook .l2{font:italic 400 72px/1.02 'Instrument Serif',serif;color:var(--ink);white-space:nowrap}
+#hook .l2 em{color:var(--deep)}
+/* ---- captions ---- */
+#cap{position:absolute;left:0;right:0;pointer-events:none;z-index:8;text-align:center}
+#cap .who{display:none}
+/* cap-03 pop-serif headline (default) and cap-04 classic: the spoken words as the big headline at the top */
+body.cap-03 #cap,body.cap-04 #cap{top:34px}
+body.cap-03 #cap .who:not(:empty),body.cap-04 #cap .who:not(:empty){display:inline-block;font:600 calc(30px*var(--cs)) Poppins;color:#6d5250;margin-bottom:4px}
+body.cap-03 #cap .line{font:400 calc(104px*var(--cs))/1.02 'Instrument Serif',serif;font-style:italic;color:var(--ink)}
+body.cap-04 #cap .who{font-family:Inter;font-weight:500}
+body.cap-04 #cap .line{font:italic 800 calc(88px*var(--cs))/1.05 'Playfair Display',serif;color:var(--ink)}
+body.cap-03 #cap .w,body.cap-04 #cap .w{display:inline-block;margin:0 .1em}
+body.cap-03 #cap .kw,body.cap-04 #cap .kw{color:var(--deep)}
+/* cap-05 subtitle line under the media: Poppins 600 ink, keyword in an accent box */
+body.cap-05 #cap{bottom:40px}
+body.cap-05 #cap .line{display:inline-block;font:600 calc(58px*var(--cs))/1.2 Poppins;color:var(--ink);background:rgba(255,255,255,.85);padding:6px 26px;border-radius:16px}
+body.cap-05 #cap .kw{display:inline-block;background:var(--accent);border-radius:10px;padding:0 12px;margin:0 2px}
+/* cap-01 serif-band: Instrument Serif white on a dark band, keyword italic in the light accent */
+body.cap-01 #cap{bottom:44px}
+body.cap-01 #cap .line{display:inline-block;font:400 calc(70px*var(--cs))/1.15 'Instrument Serif',serif;color:#fff;background:rgba(24,14,15,.86);padding:8px 34px 12px;border-radius:18px}
+body.cap-01 #cap .kw{font-style:italic;color:var(--kwlight)}
+/* cap-02 anton-caps: Anton caps, white with a heavy outline, keyword in the light accent */
+body.cap-02 #cap{bottom:40px}
+body.cap-02 #cap .line{display:inline-block;font:400 calc(78px*var(--cs))/1.1 Anton,sans-serif;text-transform:uppercase;color:#fff;letter-spacing:.01em;-webkit-text-stroke:10px var(--ink);paint-order:stroke fill;text-shadow:0 6px 0 var(--ink)}
+body.cap-02 #cap .kw{color:var(--kwlight)}
+.w{display:inline-block}
+</style>
+</head>
+<body>
+<div id="paper"></div>
+<div id="infos"></div>
+<div id="cam"><div class="tape"></div><div class="win"><video id="v" muted playsinline preload="auto"></video></div><div id="emos"></div></div>
+<div id="comment"><div class="who"><i></i><span class="me">you</span></div><div class="box"><span class="txt"></span><span class="cur"></span></div><div class="dm"></div></div>
+<div id="stamp" class="brandbit"><img alt=""><span class="wm"></span></div>
+<div id="bug" class="brandbit"><img alt=""><span class="wm"></span></div>
+<div id="end" class="brandbit"><div class="brand"><img alt=""><div class="name wm"></div></div>
+  <div class="tag"></div><div class="row"><div class="url"></div><div class="ask"></div></div></div>
+<div id="hook"><div class="l1"></div><div class="l2"></div></div>
+<div id="cap"><div class="who"></div><div class="line"></div></div>
+<div id="sting" class="brandbit"><div class="bg"></div><div class="wrap"><img alt=""><div class="word wm"></div>
+  <svg viewBox="0 0 560 60"><path id="swipe" d="M8 40 C 140 10, 300 58, 552 22" style="stroke:var(--accent)" stroke-width="16" stroke-linecap="round" fill="none" pathLength="1"/></svg></div></div>
+<script>
+const C = /*CFG*/{};
+const q = new URLSearchParams(location.search);
+const B = Object.assign({ name: '', logo: null, tagline: '', url: '', ask: '', comment_word: 'LINK', dm: '', demo_label: 'demo account', commenter: 'you' }, C.brand || {});
+// brand colours / font -> CSS vars
+const VARS = { accent: '--accent', deep: '--deep', ink: '--ink', paper: '--paper', hl: '--hl', kwlight: '--kwlight', font: '--wmfont' };
+for (const k in VARS) if (B[k]) document.documentElement.style.setProperty(VARS[k], k === 'font' ? `'${B.font}',serif` : B[k]);
+const ZW = +(q.get('w') || 1920); if (ZW !== 1920) document.documentElement.style.zoom = ZW / 1920;
+const CAP = q.get('cap') || C.cap || 'cap-03', CS = +(q.get('cs') || C.cs || 1);
+document.body.classList.add(CAP); document.documentElement.style.setProperty('--cs', CS);
+const HEAD = CAP === 'cap-03' || CAP === 'cap-04';
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const ease = x => 1 - Math.pow(1 - clamp(x), 3);
+const easeIO = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const back = x => { x = clamp(x); const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// fill the brand bits
+document.querySelectorAll('.brandbit').forEach(el => { const img = el.querySelector('img'); if (B.logo) img.src = B.logo; else el.classList.add('nologo'); });
+document.querySelectorAll('.brandbit .wm').forEach(el => el.textContent = B.name);
+$('#end .tag').textContent = B.tagline; $('#end .url').textContent = B.url; $('#end .ask').textContent = B.ask;
+$('#comment .dm').textContent = B.dm; $('#comment .me').textContent = B.commenter;
+if (C.hook) { $('#hook .l1').textContent = C.hook.l1 || ''; $('#hook .l2').innerHTML = esc(C.hook.l2 || '').replace(/\*([^*]+)\*/g, '<em>$1</em>'); }
+const v = $('#v'), cam = $('#cam'); v.src = q.get('face') || C.video || 'face-cut.mp4';
+// ---- layouts: card rect (x,y,w,h,rot) + info area, for headline captions (top) or bottom captions ----
+const L = HEAD ? {
+  big:    { cam: [300, 250, 1320, 780, -1], area: null },
+  side:   { cam: [60, 270, 640, 760, -2.5], area: [760, 250, 1100, 790] },
+  corner: { cam: [50, 700, 470, 340, -3], area: [560, 240, 1310, 800] },
+  chaos:  { cam: [60, 260, 1000, 770, -1.5], area: [1110, 260, 760, 760] },
+  end:    { cam: [90, 300, 560, 520, -4], area: null },
+} : {
+  big:    { cam: [200, 50, 1520, 870, -1], area: null },
+  side:   { cam: [60, 60, 660, 860, -2.5], area: [780, 60, 1080, 860] },
+  corner: { cam: [50, 640, 460, 330, -3], area: [560, 50, 1310, 860] },
+  chaos:  { cam: [60, 60, 1010, 860, -1.5], area: [1110, 80, 760, 760] },
+  end:    { cam: [90, 260, 560, 520, -4], area: null },
+};
+// speakers: id -> {label, focus:[x%,y%]} (focus = where that person sits in the frame; "both" = the middle)
+const SPK = Object.assign({ both: { focus: [50, 30] } }, C.speakers || {});
+const focusOf = id => (SPK[id] && SPK[id].focus) || [50, 30];
+C.pages = C.pages || []; C.screens = C.screens || []; C.notes = C.notes || []; C.emo = C.emo || []; C.subs = C.subs || [];
+C.punch = C.punch || []; C.stings = C.stings || [];
+// ---- build info pages ----
+const infos = $('#infos');
+C.pages.forEach(p => { p.L = L[p.layout] || L.big; });
+C.screens.forEach(s => { const d = document.createElement('div'); d.className = 'info'; d.innerHTML =
+  (s.tag ? `<div class="tagpill">${esc(s.tag)}</div>` : '<div class="tagpill" style="visibility:hidden">.</div>') +
+  `<div class="shotcard"><div class="bar"><i></i><i></i><i></i><span>${esc(s.url != null ? s.url : B.url)}</span></div><div class="view"><div class="inner"><img src="${esc(s.img)}">` +
+  (s.box ? `<div class="hl" style="left:${s.box[0]}%;top:${s.box[1]}%;width:${s.box[2]}%;height:${s.box[3]}%"></div>` : '') + `</div></div>` +
+  (s.demo ? `<div class="demo">${esc(B.demo_label)}</div>` : '') + `</div>`;
+  infos.appendChild(d); s.el = d; });
+C.notes.forEach(n => { const d = document.createElement('div'); d.className = 'note'; d.innerHTML = `<div class="ic">${esc(n.i)}</div><div><b>${esc(n.h)}</b><span>${esc(n.s)}</span></div><div class="tag">!</div>`; infos.appendChild(d); n.el = d; });
+C.emo.forEach(e => { const d = document.createElement('div'); d.className = 'emo';
+  d.innerHTML = (/\.(png|svg|webp|jpe?g)$/i.test(e.e) ? `<img src="${esc(e.e)}">` : esc(e.e)) + (e.label ? `<small>${esc(e.label)}</small>` : ''); $('#emos').appendChild(d); e.el = d; });
+const pageAt = T => C.pages.find(p => T >= p.a && T < p.b) || C.pages[C.pages.length - 1];
+const rectAt = T => { const i = C.pages.indexOf(pageAt(T)), p = C.pages[i], prev = C.pages[i - 1];
+  const r1 = p.L.cam; if (!prev) return r1; const k = easeIO((T - p.a + .12) / .55); return r1.map((x, j) => lerp(prev.L.cam[j], x, k)); };
+C.screens.forEach(sc => { const p = C.pages.find(pg => sc.a >= pg.a - .01 && sc.a < pg.b); sc.area = (p && p.L.area) || L.side.area; });
+const END = C.end != null ? C.end : C.dur + 1;
+window.__duration = C.dur;
+window.__seek = async T => {
+  const p = pageAt(T), R = rectAt(T);
+  // punch-in inside the card (crop zoom)
+  let sc = 1, [fx, fy] = focusOf(p.focus);
+  C.punch.forEach(u => { if (T >= u.t - .15 && T < u.u + .25) { const k = ease((T - u.t + .15) / .3) * (1 - ease((T - u.u) / .25)); sc = 1 + (u.s - 1) * k; fx = u.x; fy = u.y; } });
+  const drift = 1 + .025 * clamp((T - p.a) / Math.max(1, p.b - p.a));
+  Object.assign(cam.style, { left: R[0] + 'px', top: R[1] + 'px', width: R[2] + 'px', height: R[3] + 'px', transform: `rotate(${R[4]}deg)` });
+  // the focus point eases between pages
+  const i = C.pages.indexOf(p), prev = C.pages[i - 1]; const fk = prev ? easeIO((T - p.a + .12) / .55) : 1;
+  const pf = focusOf(prev ? prev.focus : p.focus), cf = focusOf(p.focus);
+  v.style.objectPosition = `${lerp(pf[0], cf[0], fk)}% ${lerp(pf[1], cf[1], fk)}%`;
+  v.style.transformOrigin = `${fx}% ${fy}%`; v.style.transform = `scale(${(sc * drift).toFixed(4)})`;
+  cam.style.setProperty('--tape', p.layout === 'big' ? 0 : 1);
+  // screens: blur in, zoom to the highlight, highlighter sweeps
+  C.screens.forEach(s => { const on = T >= s.a && T < s.b; const k = ease((T - s.a) / .4), o = 1 - ease((T - s.b + .25) / .25);
+    s.el.style.opacity = on ? Math.min(k, o) : 0; if (!on) return; const A = s.area; s.el.style.left = A[0] + 'px'; s.el.style.top = A[1] + 'px';
+    s.el.style.filter = `blur(${((1 - k) * 12).toFixed(1)}px)`; s.el.style.transform = `translateY(${(1 - k) * 30}px) rotate(${s.rot || 0}deg)`;
+    const card = s.el.querySelector('.shotcard'), pill = s.el.querySelector('.tagpill'); const CW = A[2], CH = A[3] - 80;
+    card.style.left = '0px'; card.style.top = '80px'; card.style.width = CW + 'px'; card.style.height = CH + 'px';
+    const img = s.el.querySelector('img'), inner = s.el.querySelector('.inner'); const VW = CW, VH = CH - 36; inner.style.width = VW + 'px';
+    const IH = VW * (img.naturalHeight || 9) / (img.naturalWidth || 16); const b = s.box || [0, 0, 100, 100];
+    const z1 = s.box ? clamp(Math.min(.86 * VW / (b[2] / 100 * VW), .8 * VH / (b[3] / 100 * IH)), 1, 2.6) : 1;
+    const z = lerp(1, z1, easeIO((T - s.a - .25) / .8)) * (1 + .015 * clamp((T - s.a - 1) / 3));
+    const cx = (b[0] + b[2] / 2) / 100 * VW, cy = (b[1] + b[3] / 2) / 100 * IH;
+    const tx = clamp(VW / 2 - cx * z, VW - VW * z, 0), ty = IH * z > VH ? clamp(VH / 2 - cy * z, VH - IH * z, 0) : (VH - IH * z) / 2;
+    inner.style.transform = `translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${z.toFixed(4)})`;
+    const hl = s.el.querySelector('.hl'); if (hl) hl.style.transform = `scaleX(${ease((T - s.a - 1.0) / .45).toFixed(3)})`;
+    pill.style.transform = `scale(${lerp(.6, 1, clamp(back((T - s.a) / .4)))})`; });
+  // notifications pile up in the chaos area and shake
+  if (C.notes.length) { const ch = C.chaos || [C.notes[0].t, C.notes[C.notes.length - 1].t + 2];
+    const shake = T >= ch[0] && T < ch[1] ? Math.sin(T * 70) * 10 * (1 - clamp((T - ch[0]) / 2.2)) : 0;
+    C.notes.forEach((n, j) => { const on = T >= n.t && T < ch[1] + .25; const k = back((T - n.t) / .4), o = 1 - ease((T - ch[1]) / .25);
+      const A = L.chaos.area; n.el.style.left = (A[0] - 30 + (j % 2) * 40) + 'px'; n.el.style.top = (A[1] + 40 + j * 200) + 'px';
+      n.el.style.opacity = on ? o : 0; n.el.style.transform = `translateY(${(1 - clamp(k)) * -40}px) scale(${lerp(.85, 1, clamp(k))}) translateX(${shake * (j % 2 ? 1 : -1)}px) rotate(${(j % 2 ? 2 : -2) + shake * .3}deg)`; }); }
+  // emoji / stickers ride on the card
+  C.emo.forEach(e => { const on = T >= e.t && T < e.u + .2; const k = back((T - e.t) / .35), o = 1 - ease((T - e.u) / .2);
+    e.el.style.left = e.x + '%'; e.el.style.top = e.y + '%'; e.el.style.opacity = on ? o : 0; e.el.style.transform = `translate(-50%,-50%) scale(${(on ? k : 0).toFixed(3)}) rotate(${Math.sin((T - e.t) * 6) * 6}deg)`; });
+  // brand sting (big, full screen) + stamp (small, on the card)
+  const st = $('#sting'), stamp = $('#stamp'); st.style.opacity = 0; stamp.style.opacity = 0;
+  C.stings.forEach(s => {
+    if (s.k === 'big' && T >= s.t && T < s.t + 1.25) { const k = ease((T - s.t) / .3), o = 1 - ease((T - s.t - 1.0) / .25);
+      st.style.opacity = Math.min(k, o); const w = st.querySelector('.wrap'); w.style.transform = `scale(${lerp(.82, 1, back((T - s.t) / .45))})`; w.style.filter = `blur(${((1 - k) * 12).toFixed(1)}px)`;
+      const pa = st.querySelector('#swipe'); pa.style.strokeDasharray = 1; pa.style.strokeDashoffset = (1 - ease((T - s.t - .25) / .45)).toFixed(3); }
+    if (s.k === 'small' && T >= s.t && T < s.t + .8) { const k = back((T - s.t) / .3), o = 1 - ease((T - s.t - .55) / .25);
+      stamp.style.left = (R[0] + R[2] * .5 - 230) + 'px'; stamp.style.top = (R[1] + R[3] * .62) + 'px';
+      stamp.style.opacity = o; stamp.style.transform = `rotate(-6deg) scale(${lerp(1.5, 1, clamp(k))})`; } });
+  $('#bug').style.opacity = C.badge != null && T >= C.badge && T < END ? ease((T - C.badge) / .4) : 0;
+  // comment card in the side area: types the ask word, then the DM line
+  const cm = $('#comment');
+  if (C.comment) { const [ca, ct, cdm] = C.comment; const con = T >= ca && T < END + .2; const ck = back((T - ca) / .4);
+    const A2 = L.side.area; cm.style.left = (A2[0] + 120) + 'px'; cm.style.top = (A2[1] + 140) + 'px';
+    cm.style.opacity = con ? 1 - ease((T - END) / .2) : 0; cm.style.transform = `rotate(2deg) scale(${con ? lerp(.7, 1, clamp(ck)) : 1})`;
+    const word = B.comment_word, n = Math.floor(clamp((T - ct) / .5) * word.length); cm.querySelector('.txt').textContent = word.slice(0, n);
+    cm.querySelector('.cur').style.opacity = Math.floor(T * 3) % 2 ? 1 : .2; cm.querySelector('.dm').style.opacity = ease((T - cdm) / .3); }
+  else cm.style.opacity = 0;
+  const en = $('#end'), ek = C.end != null ? ease((T - C.end - .2) / .5) : 0; en.style.opacity = ek; en.style.transform = `translateY(${(1 - ek) * 40}px)`;
+  // hook sticker (frame 1)
+  const hk = $('#hook');
+  if (C.hook) { const ho = 1 - ease((T - C.hook.out) / .3); hk.style.left = (HEAD ? 230 : 150) + 'px'; hk.style.top = (HEAD ? 222 : 20) + 'px';
+    hk.style.opacity = ho; hk.style.transform = `rotate(-3deg) translateY(${(1 - ho) * -30}px)`; }
+  // captions (headline styles build word by word out of a blur; bottom styles pop the keyword)
+  const capEl = $('#cap'), line = capEl.querySelector('.line'), who = capEl.querySelector('.who');
+  const s = C.subs.find(x => T >= x.a && T < x.b + .1);
+  if (s && T < END + .1) { if (line.dataset.k !== s.h) { line.dataset.k = s.h; line.innerHTML = s.h.split(' ').map(w => { const kw = w.includes('*'); return `<span class="w${kw ? ' kw' : ''}">${esc(w.replace(/\*/g, ''))}</span>`; }).join(' '); }
+    who.textContent = (SPK[s.who] && SPK[s.who].label) || '';
+    const ws = [...line.querySelectorAll('.w')], n = ws.length;
+    ws.forEach((w, j) => { const tw = s.a + (s.b - s.a) * j / Math.max(1, n) * .55; const k = ease((T - tw) / .18);
+      if (HEAD) { w.style.opacity = lerp(.3, 1, k); w.style.filter = `blur(${((1 - k) * 6).toFixed(1)}px)`; w.style.transform = `translateY(${(1 - k) * 14}px)`; }
+      else { w.style.opacity = 1; w.style.filter = ''; w.style.transform = w.classList.contains('kw') ? `scale(${lerp(.7, 1, clamp(back((T - s.a) / .3))).toFixed(3)}) rotate(-2deg)` : ''; } });
+    capEl.style.opacity = HEAD ? 1 : ease((T - s.a) / .12); }
+  else capEl.style.opacity = 0;
+  // video, frame-exact (cut the footage all-intra: local_cut.py --gop 1)
+  const vt = Math.min(T, C.vdur - 0.04);
+  if (Math.abs(v.currentTime - vt) > .001) await new Promise(r => { v.addEventListener('seeked', r, { once: true }); setTimeout(r, 3000); v.currentTime = vt; });
+};
+if (!q.has('render')) { const t0 = performance.now(); const loop = async () => { await window.__seek(((performance.now() - t0) / 1000) % C.dur); requestAnimationFrame(loop); }; loop(); }
+</script></body></html>

@@ -14,6 +14,8 @@ Roles (what triggers them on the page)              Edits catalogue sound (searc
   highlight  highlighter sweeps (mark, .hlbox)        "Notification (pop-up)" id 1488519876118528   highlight.*       0.5
   hit        a count-up landing / data-exit="cut"    "Pop"                   id 1946614579464123   hit.*             0.45
 In Edits: addSoundEffect {effect: id} → move to the cue time → setVolume (typing: trim to its duration).
+Pages that compute their own cues (style-07 Board, scripts/board_build.py) embed them as
+<script type="application/json" id="sfx-cues">[[t, role, dur], ...]</script>; those are added to the list.
 Cues closer than 0.12 s with the same role are merged. Times are timeline seconds (the page's own clock).
 """
 import html.parser, json, os, subprocess, sys, glob
@@ -31,9 +33,15 @@ CARD = {"card", "shotcard", "phonecard", "qcard", "polaroid", "stat", "quote", "
         "phone", "person", "profile", "notif", "searchbar", "meter", "roll", "col", "row", "wide"}
 
 class P(html.parser.HTMLParser):
-    def __init__(s): super().__init__(); s.cues = []; s.scene_ins = []
+    def __init__(s): super().__init__(); s.cues = []; s.scene_ins = []; s.inj = None
+    def handle_data(s, d):
+        if s.inj is not None: s.inj += d
+    def handle_endtag(s, tag):
+        if tag == "script" and s.inj is not None:
+            s.cues += [(float(t), r, float(d or 0)) for t, r, d in json.loads(s.inj or "[]") if r in ROLES]; s.inj = None
     def handle_starttag(s, tag, a):
         a = dict(a); cls = set((a.get("class") or "").split())
+        if tag == "script" and a.get("id") == "sfx-cues": s.inj = ""; return
         if "scene" in cls and "data-in" in a:
             s.scene_ins.append(float(a["data-in"]));
             if a.get("data-exit") == "cut": s.cues.append((float(a["data-out"]), "hit", 0))

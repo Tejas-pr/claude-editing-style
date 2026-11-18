@@ -1,0 +1,169 @@
+{
+ "captions": "cap-03",
+ "brand": {
+  "name": "Acme",
+  "logo": "logo.svg",
+  "tagline": "Bookings, payments and reviews in one place.",
+  "url": "acme.example",
+  "ask": "Comment “LINK” 👇",
+  "comment_word": "LINK",
+  "dm": "✈️ link sent to your DMs",
+  "accent": "#b9c8f2",
+  "deep": "#2747b8",
+  "kwlight": "#c7d3ff"
+ },
+ "speakers": {
+  "a": {
+   "label": "her",
+   "focus": [
+    30,
+    40
+   ]
+  },
+  "b": {
+   "label": "him",
+   "focus": [
+    70,
+    40
+   ]
+  }
+ },
+ "hook": {
+  "l1": "POV: you run a small studio",
+  "l2": "and *nothing* is organised",
+  "out": 3.0
+ },
+ "subs": [
+  [
+   0.1,
+   2.9,
+   "a",
+   "I have SO many *problems*"
+  ],
+  [
+   4.0,
+   6.9,
+   "a",
+   "Who paid? Who *didn't*?"
+  ],
+  [
+   8.0,
+   10.9,
+   "b",
+   "Just use *Acme*"
+  ],
+  [
+   12.0,
+   14.9,
+   "b",
+   "Every *booking* in one place"
+  ],
+  [
+   16.0,
+   18.9,
+   "b",
+   "Comment *LINK*"
+  ]
+ ],
+ "pages": [
+  [
+   0,
+   "big",
+   "both"
+  ],
+  [
+   4.0,
+   "chaos",
+   "a"
+  ],
+  [
+   8.0,
+   "big",
+   "b"
+  ],
+  [
+   12.0,
+   "corner",
+   "b"
+  ],
+  [
+   16.0,
+   "side",
+   "b"
+  ],
+  [
+   19.2,
+   "end",
+   "b"
+  ]
+ ],
+ "punch": [
+  [
+   1.5,
+   1.15,
+   30,
+   40,
+   2.8
+  ]
+ ],
+ "screens": [
+  {
+   "t": 12.1,
+   "img": "screens/dash.png",
+   "box": [
+    2,
+    9,
+    31,
+    28
+   ],
+   "demo": true,
+   "tag": "for studios",
+   "url": "acme.example/app"
+  }
+ ],
+ "emoji": [
+  [
+   0.5,
+   "😭",
+   88,
+   18,
+   "",
+   2.8
+  ]
+ ],
+ "notes": [
+  [
+   4.1,
+   "💸",
+   "Payment pending",
+   "2 clients haven't paid"
+  ],
+  [
+   4.9,
+   "📅",
+   "Bookings",
+   "which date??"
+  ]
+ ],
+ "chaos": [
+  5.6,
+  7.0
+ ],
+ "stings": [
+  [
+   8.5,
+   "big"
+  ],
+  [
+   10.0,
+   "small"
+  ]
+ ],
+ "badge": 10.5,
+ "comment": [
+  16.1,
+  16.8,
+  18.0
+ ],
+ "end": 19.2
+}

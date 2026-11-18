@@ -3,6 +3,19 @@
 New styles land here first. Update with `claude plugin marketplace update claude-editing-style` and
 `claude plugin update editing-style@claude-editing-style`, then run `/editing-style:update` in your project.
 
+## 1.4.0 — 2026-11-18
+- **New style: Board (style-07)** · `/editing-style:board` — 16:9 for YouTube, LinkedIn, X or a website. The footage is
+  always on screen as a white-framed card that moves (big while talking, medium with a shaking notification pile, small in
+  the corner while real app / site screens zoom into a highlighter sweep, beside a comment card that types the ask word),
+  then an end card. Hook sticker, emoji on the card, brand sting + stamp + corner badge, any of the 5 caption styles.
+  Brand (name, logo, colours, font, url, ask word) comes from one `spec.json`. Local render, no Edits needed.
+- New `templates/board169.html`, `scripts/board_build.py` (spec.json in raw-recording seconds → motion.html with its
+  sound cues embedded) and `scripts/board_spec_example.json`.
+- `local_cut.py --size WxH --gop N` (16:9 / 4K footage, all-intra for frame-exact pages); `sfx_cues.py` reads cues a page
+  embeds, so `local_render.sh` mixes Board's sounds like any other page (`W=1920 H=1080`).
+- Your own `/build` styles now start at **style-08**. If you already saved a style-07, `/editing-style:update` keeps yours
+  and copies Board under the next free number (the name "board" still works).
+
 ## 1.3.1 — 2026-11-18
 - **Face card fix (style-04/05):** new polaroid transform (scale 0.56, x 0.5, bottom y 0.657 / top y 0.287) shows the
   whole head and shoulders; the old one cut the hair. Prefer a top polaroid over the wide top card for faces.

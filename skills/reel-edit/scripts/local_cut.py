@@ -3,7 +3,7 @@
 """LOCAL cut (no Edits app): remove pauses, speed up, and get word times from a raw face-cam / voiceover recording.
 
   python3 -I local_cut.py RAW.mov OUTDIR [--speed 1.15] [--min-pause 0.3] [--margin 0.06] [--db -38]
-                          [--model ggml-small.en.bin] [--cut 12.4-13.9 --cut 30-31.2]
+                          [--model ggml-small.en.bin] [--cut 12.4-13.9 --cut 30-31.2] [--size 1440x2560] [--gop 15]
 
 Writes into OUTDIR:
   face-cut.mp4   the cut + sped-up recording (video + audio), timeline-aligned with the motion page (1440x2560 cover crop)
@@ -11,7 +11,8 @@ Writes into OUTDIR:
                  so reel_lib.load_map() / words() work unchanged)
   words.json     [[word, timeline_seconds], ...] if whisper.cpp (`whisper-cli`) and a model are available
                  (--model or $WHISPER_MODEL); otherwise transcribe however you like and time words yourself.
-Needs ffmpeg. --cut removes extra ranges (retakes, blips) in RAW seconds.
+Needs ffmpeg. --cut removes extra ranges (retakes, blips) in RAW seconds. --size = output canvas (1920x1080 for
+style-07 Board, 3840x2160 for a 4K take); --gop 1 = all-intra, for pages that seek the footage frame by frame (Board).
 """
 import json, os, re, shutil, subprocess, sys
 
@@ -23,6 +24,7 @@ if len(sys.argv) < 3: print(__doc__); sys.exit(1)
 RAW, OUT = sys.argv[1], sys.argv[2]; os.makedirs(OUT, exist_ok=True)
 SP, MINP, MAR, DB = float(arg("--speed", 1.15)), float(arg("--min-pause", .3)), float(arg("--margin", .06)), arg("--db", "-38")
 EXTRA = [tuple(map(float, c.split("-"))) for c in arg("--cut", many=True)]
+OW, OH = map(int, arg("--size", "1440x2560").lower().split("x")); GOP = arg("--gop", "15")
 dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", RAW], capture_output=True, text=True).stdout)
 
 # 1) pauses
@@ -43,9 +45,9 @@ print(f"kept {len(K)} pieces, {sum(b - a for a, b, _ in K):.1f}s of {dur:.1f}s r
 # 2) cut + speed (video and audio), cover-crop to the reel canvas
 v = ";".join(f"[0:v]trim=start={a}:end={b},setpts=(PTS-STARTPTS)/{SP}[v{i}]" for i, (a, b, _) in enumerate(K))
 au = ";".join(f"[0:a]atrim=start={a}:end={b},asetpts=PTS-STARTPTS,atempo={SP},afade=t=in:d=0.01,afade=t=out:st={max(0, (b - a) / SP - .015):.4f}:d=0.015[a{i}]" for i, (a, b, _) in enumerate(K))
-fc = f"{v};{au};" + "".join(f"[v{i}][a{i}]" for i in range(len(K))) + f"concat=n={len(K)}:v=1:a=1[vc][ac];[vc]fps=30,scale=1440:2560:force_original_aspect_ratio=increase,crop=1440:2560[vo]"
+fc = f"{v};{au};" + "".join(f"[v{i}][a{i}]" for i in range(len(K))) + f"concat=n={len(K)}:v=1:a=1[vc][ac];[vc]fps=30,scale={OW}:{OH}:force_original_aspect_ratio=increase,crop={OW}:{OH}[vo]"
 subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", RAW, "-filter_complex", fc, "-map", "[vo]", "-map", "[ac]",
-                "-c:v", "libx264", "-preset", "medium", "-crf", "14", "-g", "15", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "256k",
+                "-c:v", "libx264", "-preset", "medium", "-crf", "14", "-g", GOP, "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "256k",
                 os.path.join(OUT, "face-cut.mp4")], check=True)
 print("wrote", os.path.join(OUT, "face-cut.mp4"))
 

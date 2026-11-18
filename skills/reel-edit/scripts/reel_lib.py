@@ -62,12 +62,14 @@ STYLES = {
   "style-04": ("paper.html", "pop-serif"),   # FOLIO · Folio (default): headline + real screenshots + smooth motion + moving face card
   "style-05": ("paper.html", "pop-serif"),   # ECHO · Echo (paper subtitles): face card wide on top, subtitle line under the media (.sub)
   "style-06": (None, None),                  # SKIT · Skit (funny skit / re-acted trending sound): no motion page, scripts/skit_sync.py
+  "style-07": ("board169.html", "pop-serif"), # BOARD · Board (16:9 moving card): footage card always on screen, built by scripts/board_build.py
 }
-STYLE_NAMES = {"duet": "style-01", "ink": "style-02", "glow": "style-03", "folio": "style-04", "echo": "style-05", "skit": "style-06"}
+STYLE_NAMES = {"duet": "style-01", "ink": "style-02", "glow": "style-03", "folio": "style-04", "echo": "style-05", "skit": "style-06", "board": "style-07"}
 CAPTION_NAMES = {"velvet": "serif-band", "volt": "anton-caps", "silk": "pop-serif", "heritage": "classic"}   # marker = .sub lines
 EDIT_STYLES = {k: v[0] for k, v in STYLES.items()} | {n: STYLES[i][0] for n, i in STYLE_NAMES.items()} | {"split": "split.html", "paper": "paper.html", "story": "story.html"}
 def template(style):
     if EDIT_STYLES[style] is None: raise ValueError(f"{style} has no motion template: build it with scripts/skit_sync.py")
+    if EDIT_STYLES[style] == "board169.html": raise ValueError(f"{style} (Board) is not built with assemble(): write a spec.json and run scripts/board_build.py")
     return os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates", EDIT_STYLES[style])
 
 

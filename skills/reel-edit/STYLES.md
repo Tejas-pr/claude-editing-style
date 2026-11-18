@@ -1,10 +1,10 @@
-# Style catalogue: Duet · Ink · Glow · Folio · Echo · Skit
+# Style catalogue: Duet · Ink · Glow · Folio · Echo · Skit · Board
 
 Every style has a number AND a name; both work everywhere (`template("folio")`, `/editing-style:folio`).
 
 At the start of EVERY edit, `/editing-style:edit` (or the reel-edit skill) asks the user in the AskUserQuestion dialog:
-**1. edit style** (style-01 … style-06) · **2. caption style** + size · **3. face cam or voiceover** · **4. topic / sources to
-screenshot** · **5. target length**. Never assume last reel's answers. Show the preview PNGs below if they want to see them. Users add their own styles as style-07, style-08 … with `/editing-style:build` (stored in `reel-library/`).
+**1. edit style** (style-01 … style-07) · **2. caption style** + size · **3. face cam or voiceover** · **4. topic / sources to
+screenshot** · **5. target length**. Never assume last reel's answers. Show the preview PNGs below if they want to see them. Users add their own styles as style-08, style-09 … with `/editing-style:build` (stored in `reel-library/`).
 `reel_lib.STYLES[id]` → (template, default captions); `template("style-04")` gives the template path.
 
 | id | name | template | default captions | face | best for | preview |
@@ -15,6 +15,7 @@ screenshot** · **5. target length**. Never assume last reel's answers. Show the
 | **style-04** | **Folio** · paper pro *(default)* | `paper.html` | `pop-serif` (headline) | moving face card: bottom polaroid / top wide / center / full / hidden | news, breakdowns, anything with sources: real tweets/IG/articles + smooth motion | `styles/style-04.png` |
 | **style-05** | **Echo** · paper subtitles | `paper.html` | `pop-serif` + `.sub` lines | wide card on top (or full) | faster talking reels: one subtitle line under the media, keyword in a yellow box | `styles/style-05.png` |
 | **style-06** | **Skit** · funny skit / re-acted sound | none (`scripts/skit_sync.py`) | the reference's title + emoji reactions (🤡 😭) | the take itself, full screen, with 2x close-up punch-ins | POV skits and lip-sync memes on a trending sound: your take timed to the sound piece by piece | `styles/style-06.png` |
+| **style-07** | **Board** · 16:9 moving card | `board169.html` (`scripts/board_build.py` + a spec.json) | `pop-serif` headline (all 5 work) | the footage ALWAYS on screen as a white-framed card that moves: big (talking) · chaos (+ notification pile) · corner (screens fill the frame) · side (comment card) · end | landscape (YouTube, LinkedIn, X, website) promos, product demos, two-person skits about a product: real app / site screens with zoom-to-highlight, hook sticker, brand sting, end card | `styles/style-07.png` |
 
 ## Caption styles (ask together with the edit style)
 | id | name | where it shows | size default (smaller · bigger) |
@@ -39,6 +40,9 @@ screenshot** · **5. target length**. Never assume last reel's answers. Show the
 - **style-06**: no motion page. Anchors (words, beats, hand hits) → `skit_sync.py plan skit.json` → speeds per piece,
   2x close-up punch-ins, sound cuts only in quiet gaps, title + emoji texts in Edits (or `skit_sync.py render` locally).
   Full recipe: SKILL.md "style-06 Skit".
+- **style-07**: local render, no Edits needed. `local_cut.py RAW reels/<slug> --size 1920x1080 --gop 1` → spec.json
+  (brand, pages, subs, screens …; `scripts/board_spec_example.json`) → `board_build.py spec.json reels/<slug>` →
+  `W=1920 H=1080 local_render.sh motion.html face-cut.mp4 final.mp4 [music] [vol] [sfx_dir]`. Full recipe: SKILL.md "style-07 Board".
 
 ## Edits recipe for the moving face card (style-04/05), verified
 1. Render `motion.mov --alpha`; it prints every face-window change `time {x,y,w,h}` (null = hidden).

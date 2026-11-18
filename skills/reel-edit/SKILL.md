@@ -11,7 +11,7 @@ own folder `./reels/<date>-<slug>/` (build.py, motion.html, screenshots, CREDITS
 
 ## One-line use
 `/editing-style:edit <video|none> [style] [captions] [script] [edits|local] [9:16|16:9|1:1] [notes]` — names or ids:
-styles **duet · ink · glow · folio · echo · skit** (style-01…06), captions **velvet · volt · silk · heritage · marker**
+styles **duet · ink · glow · folio · echo · skit · board** (style-01…07), captions **velvet · volt · silk · heritage · marker**
 (cap-01…05), scripts **turn · twice · flash**. Ask only for what's missing. `template("folio")` and
 `assemble(..., captions="silk", aspect="16:9")` accept the names. 16:9 renders: `render.mjs --w 3840 --h 2160`.
 Music: Edits library downloads can fail (DownloadError 3) — use royalty-free tracks only for public videos, and if the
@@ -20,8 +20,9 @@ download fails tell the user to drop the bed in by hand (don't loop on retries).
 ## Fast path
 0. **Ask first, every time (AskUserQuestion dialog; never assume the last reel's answers).** Read `reel-library/`
    (video-styles/, caption-styles/, script-styles/, reel-ideas/, brand.md) and offer, in one dialog of up to 4 questions:
-   - **Video style**: the library's `video-styles/*.md` (built-ins style-01 … style-06, see `STYLES.md` + `styles/*.png`;
-     style-06 Skit = a re-acted trending sound, no motion page: see "style-06 Skit").
+   - **Video style**: the library's `video-styles/*.md` (built-ins style-01 … style-07, see `STYLES.md` + `styles/*.png`;
+     style-06 Skit = a re-acted trending sound, no motion page: see "style-06 Skit"; style-07 Board = 16:9 with the
+     footage in a moving card, local render: see "style-07 Board").
    - **Caption style** + size: `caption-styles/*.md` (cap-01 … cap-05). Default = the video style's default.
    - **Script style** (if a script is needed): `script-styles/*.md` (e.g. moment→cost→turn→action, double tap, news).
    - **Output**: Edits app (needs the `metapilot-native` MCP connected) or local render (Chrome + ffmpeg).
@@ -204,6 +205,32 @@ fits (actors are faster or slower than the sound). Match MOMENTS, give each piec
 no speed < 0.7 on movement · no black frame or silent tail at the end · −14 LUFS.
 **Working with the creator live:** they may edit the same Edits timeline while you work. Re-read `elements` before every
 change, never revert their edits (build on them), and if pieces move under you, stop and ask who drives.
+
+## style-07 Board: 16:9, the footage always on screen as a moving card (board169.html)
+For landscape videos (YouTube, LinkedIn, X, a website): product promos, demos, a two-person skit about a product. Warm grid
+paper; the footage is a white-framed card that moves between layouts per page: `big` (talking) · `chaos` (card medium +
+a pile of notifications that shakes: the problem) · `corner` (card small, real app / website screens fill the frame,
+zoom into the highlighted part, highlighter sweeps) · `side` (a comment card types the ask word, then "sent to your DMs")
+· `end` (logo + name + tagline + url + ask). Hook sticker on frame 1, emoji (or sticker images) riding on the card,
+punch-ins inside the card, a full-screen brand sting the first time the name is said, a stamp the next time, a corner
+badge after that. Captions: any of cap-01 … cap-05 (cap-03 headline default; cap-01/02/05 sit at the bottom and the
+layouts move up). Everything brand-specific (name, logo, colours, font, url, ask word) is in `spec.json` → `brand`.
+1. **Cut:** `python3 -I $SK/scripts/local_cut.py RAW.mov reels/<slug> --size 1920x1080 --gop 1 [--speed 1.1] [--cut a-b]`
+   (all-intra so the page can seek the footage frame by frame; `--size 3840x2160` for a 4K take).
+2. **Spec:** copy `scripts/board_spec_example.json` to `reels/<slug>/spec.json`; every time is a RAW-recording second from
+   the transcript (board_build maps it through map.json). `pages` = [time, layout, focus speaker]; `speakers` = who sits
+   where in the frame (focus x%, y%); `subs` = [start, end, speaker, "line with *keyword*"]; `screens` = real screenshots
+   (`scripts/source_shot.mjs` / `screenshot.sh`) with a highlighter `box` in % of the image; `demo: true` on any screen
+   with seeded or test data. Docstring of `scripts/board_build.py` lists every field.
+3. **Build + check:** `python3 -I $SK/scripts/board_build.py reels/<slug>/spec.json reels/<slug>` → `motion.html` (sound
+   cues embedded) → `node $SK/scripts/render.mjs motion.html sheet.png --w 1920 --h 1080 --stills …` (it plays
+   `face-cut.mp4` from the folder).
+4. **Render:** `W=1920 H=1080 zsh $SK/scripts/local_render.sh motion.html face-cut.mp4 final.mp4 [music|none] [vol] [sfx_dir]`
+   (voice + ducked music + every cue from `sfx_cues.py`, then −14 LUFS). In Edits instead: render `motion.mp4` and put
+   it on the main track with the voice muted under it, or the voice track from `face-cut.mp4`.
+**Gate (Board):** the brand name is heard and seen (sting + stamp + badge + end card) · every screen shows something
+the voice is saying at that moment · highlight boxes land on the right part (check the sheet) · seeded data carries the
+"demo" tag · the ask is said AND shown once · −14 LUFS.
 
 ## reel_lib.py (scripts/)
 ```python
