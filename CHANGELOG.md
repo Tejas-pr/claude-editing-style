@@ -3,6 +3,22 @@
 New styles land here first. Update with `claude plugin marketplace update claude-editing-style` and
 `claude plugin update editing-style@claude-editing-style`, then run `/editing-style:update` in your project.
 
+## 1.5.0 — 2026-11-18
+- **New style: Series (style-08, information-video-red)** · `/editing-style:series` — for educational "Part n of N"
+  series. You full screen with one-word chest captions (keyword in red), a red series chip on every page
+  (`RAG · PART 3/10`), bold colour cards for the teaching (problem / step cards with a big red first letter, acronyms that
+  land letter by letter, the everyday example), blur pages for the big lines, Phosphor stickers (never emojis), a roadmap
+  row with the current part lit, an open loop into the next part, and a **cover page as the last 0.5 s** plus a
+  1080x1920 cover PNG to upload as the Instagram cover. Series rule: later parts keep the style without asking again.
+- New `scripts/info_red.py` (the `Reel` helper: chest captions, stickers, step cards, blur pages, roadmap, next part,
+  cover), `scripts/info_red_example.py` (a runnable "API · Part 1 of 5" demo), `templates/info-red/` (CSS, cover page,
+  32 Phosphor duotone stickers, MIT).
+- Lessons: Edits caches media by path (import re-renders under a new name), per-reel CSS must not reuse engine class
+  names (`.bar` crashes the render), a softly said word can be cut as a pause (always run the captions check), music on
+  a beat: slip the theme song so the series-word reveal lands on a downbeat (`beatMarkers`).
+- Your own `/build` styles now start at **style-09**. If you already saved a style-08, `/editing-style:update` keeps yours
+  and copies Series under the next free number (the name "series" still works).
+
 ## 1.4.0 — 2026-11-18
 - **New style: Board (style-07)** · `/editing-style:board` — 16:9 for YouTube, LinkedIn, X or a website. The footage is
   always on screen as a white-framed card that moves (big while talking, medium with a shaking notification pile, small in

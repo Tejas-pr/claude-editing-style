@@ -9,6 +9,7 @@
 | style-05 | video-style | Echo (paper subtitles) | style-04 pages with one subtitle line under the media, keyword in a ye… | built-in |
 | style-06 | video-style | Skit (funny skit / re-acted sound) | your take timed to a trending sound piece by piece, 2x close-up ping-p… | built-in |
 | style-07 | video-style | Board (16:9 moving card) | 16:9 grid paper, the footage in a white card that moves big / corner / side as screens and… | built-in |
+| style-08 | video-style | Series (information-video-red) | face full screen, red series chip, colour step cards, blur pages, roadmap, open loop, cover… | built-in |
 | cap-01 | caption-style | Velvet (serif-band) | Instrument Serif on a soft dark band, keyword yellow italic | built-in |
 | cap-02 | caption-style | Volt (anton-caps) | Anton caps with a heavy outline, keyword yellow | built-in |
 | cap-03 | caption-style | Silk (pop-serif) | Poppins line + Instrument Serif italic keyword (paper headline); one-w | built-in |

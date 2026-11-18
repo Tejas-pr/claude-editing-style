@@ -11,7 +11,7 @@ own folder `./reels/<date>-<slug>/` (build.py, motion.html, screenshots, CREDITS
 
 ## One-line use
 `/editing-style:edit <video|none> [style] [captions] [script] [edits|local] [9:16|16:9|1:1] [notes]` — names or ids:
-styles **duet · ink · glow · folio · echo · skit · board** (style-01…07), captions **velvet · volt · silk · heritage · marker**
+styles **duet · ink · glow · folio · echo · skit · board · series** (style-01…08), captions **velvet · volt · silk · heritage · marker**
 (cap-01…05), scripts **turn · twice · flash**. Ask only for what's missing. `template("folio")` and
 `assemble(..., captions="silk", aspect="16:9")` accept the names. 16:9 renders: `render.mjs --w 3840 --h 2160`.
 Music: Edits library downloads can fail (DownloadError 3) — use royalty-free tracks only for public videos, and if the
@@ -20,9 +20,11 @@ download fails tell the user to drop the bed in by hand (don't loop on retries).
 ## Fast path
 0. **Ask first, every time (AskUserQuestion dialog; never assume the last reel's answers).** Read `reel-library/`
    (video-styles/, caption-styles/, script-styles/, reel-ideas/, brand.md) and offer, in one dialog of up to 4 questions:
-   - **Video style**: the library's `video-styles/*.md` (built-ins style-01 … style-07, see `STYLES.md` + `styles/*.png`;
+   - **Video style**: the library's `video-styles/*.md` (built-ins style-01 … style-08, see `STYLES.md` + `styles/*.png`;
      style-06 Skit = a re-acted trending sound, no motion page: see "style-06 Skit"; style-07 Board = 16:9 with the
-     footage in a moving card, local render: see "style-07 Board").
+     footage in a moving card, local render: see "style-07 Board"; style-08 Series = educational "Part n of N"
+     series, face full screen + red series chip + step cards + cover frame: see "style-08 Series". **Series rule:** once a
+     series has a style, every later part uses it without asking again: name it back and build).
    - **Caption style** + size: `caption-styles/*.md` (cap-01 … cap-05). Default = the video style's default.
    - **Script style** (if a script is needed): `script-styles/*.md` (e.g. moment→cost→turn→action, double tap, news).
    - **Output**: Edits app (needs the `metapilot-native` MCP connected) or local render (Chrome + ffmpeg).
@@ -232,6 +234,54 @@ layouts move up). Everything brand-specific (name, logo, colours, font, url, ask
 the voice is saying at that moment · highlight boxes land on the right part (check the sheet) · seeded data carries the
 "demo" tag · the ask is said AND shown once · −14 LUFS.
 
+## style-08 Series: educational "Part n of N" series (information-video-red)
+For a teaching series (e.g. "RAG explained, 10 parts", "APIs in 5 parts"). Every part looks the same, so viewers recognise
+the series in the feed, and every part ends on a cover frame the creator picks as the Instagram cover.
+**Series rule:** once a series uses style-08, later parts keep it WITHOUT asking again: name it back ("style-08 Series") and build.
+**Look**
+- Face full screen on the main track (scale 1), the overlay `motion.mov` (alpha) on top. Story pages are transparent.
+- One-word chest captions `R.S(a, b, keys)` (cap-03 pop-serif, keyword red italic) at `top:121rem` (below the mouth for a
+  typical face cam); top elements at 33rem. Persistent series chip top-left (red series word + `PART n/N`, automatic in `R.build`).
+- Page types: `story` (sticker + label / bubble at the top + chest captions) · `card ink` (problems, numbered steps:
+  `R.STEP(n, "T", "okens", line, chip, a, b, body, of=2)` = big red first letter + word, a line, the body, an analogy chip) ·
+  `card cream` (acronym letter by letter, analogies) · `card` (butter: the everyday example) · `blur` (`R.blur`, 2-4 big
+  lines over the blurred face; class `kw ragw` = the series word in giant red, `kw ragw sm` for longer words) · the cover.
+- Teaching devices: the acronym lands letter by letter on the spoken word; ONE running example carried through every
+  step and every part (e.g. "a 1,000-page PDF", "page 87"); a "problem 1 of 2 / 2 of 2" or "step n of N" header;
+  a roadmap row `R.road(t)` with the current part lit; the open loop `R.next_part()` = "SERIES PART n+1 →" + "follow so
+  you don't miss it" ON SCREEN only (the spoken ask is the next-part hook).
+- Stickers only (Phosphor duotone on white badges, `templates/info-red/stickers/`; `R.SVG(name)` prints the curl line
+  for a missing icon), never emojis. Colours: RED (series), BLUE (AI / robot), GREEN (ok / books), AMBER (idea), PURPLE (chat), INK (tools).
+- Something new every 1-1.5 s: build card rows, chips and stickers on the spoken words; no card may sit with one line for 2 s+.
+**Cover (the last 0.5 s)** — an opaque page: dark grid, `PART 0n of N · <KICKER>`, giant red series word, a 2-line hook
+(sans line + yellow serif italic line), B&W polaroid of the creator (B&W also hides a colour cast from room lights),
+5 stickers, a handwritten curiosity note, a small bottom strip. Key content stays inside the 3:4 profile-grid crop
+(y 24-168rem). `R.cover(line_a, line_b, note, steps, kicker="AI SERIES", stickers=[(name, colour, size, rot), …])`.
+- Cover photo: pick a talking frame looking into the lens (a hand up helps):
+  `ffmpeg -ss <t> -i RAW -frames:v 1 -vf "crop=1000:1080:<x>:<y>,hue=s=0,eq=contrast=1.18:brightness=0.02:gamma=0.95" cover-face.jpg`.
+- Cover PNG: `node render.mjs motion.html cover-frame.mp4 --from <end-.4> --to <end-.3>` → `ffmpeg -i cover-frame.mp4 -frames:v 1 cover.png`
+  → `scale=1080:1920` → `<series>-part<n>-cover-1080x1920.png` (upload it as the cover: sharper than picking the frame).
+**Recipe**
+1. Transcribe, `PLAN.json` with pauses ≥ 0.3 s + `cut` ranges for fillers / restarts → split, delete, speed. Pace: measure
+   first; teaching stays 175-190 wpm (1.15x only if the raw pace allows it). Voice gain to about −16 LUFS per piece.
+2. **Captions check before any motion:** `generateCaptions` → every line once, in order. A quietly said word can sit under
+   the −40 dB pause threshold and get cut as silence; restore it by trimming that piece out (the timeline ripples).
+3. `words.py` (cleaned display words, `None` for spoken-but-hidden), `face_cut()` → `face-cut.mp4`, `build.py` with
+   `info_red.Reel` (start from `scripts/info_red_example.py`), sheet with `--under face-cut.mp4`, fix, `render.mjs --alpha`.
+4. Edits: lengthen the LAST face piece by the cover length (`trim side:right` with a negative delta, until the track ends at
+   `R.end`), `addOverlay motion.mov`, punch-ins +10 % on 5 face words (`setTransformKeyframes` on the piece:
+   `[{"time":w-.15,"scale":1},{"time":w+.15,"scale":1.1}]`, clip-relative), ~20 sounds (whoosh on every page cut, pop on
+   the payoff word / series word, popups on cards, a riser into the re-hook), music at about 0.1 ducked 0.5 under video,
+   fades 0.3/1.5.
+5. **One theme song for the whole series.** Add it, read `beatMarkers` (`isDownbeat`), and `slipClip` the source so the
+   series-word reveal lands on a downbeat: start S = downbeat − t_reveal (pick the downbeat that keeps the song's hook in
+   the first second). Licensed library tracks are fine only on the platform they're licensed for; anything public
+   (YouTube, ads, client work) needs royalty-free music.
+6. `frameSheet` incl. the cover time → gate → `saveProject`. Export 2K + loudness pass when asked.
+**Gate (Series):** hook readable at frame 1 · series chip on every page but the cover · something new every 1.5 s · the
+running example appears in every step · roadmap + "PART n+1 →" at the end · cover = last 0.5 s and the PNG is saved ·
+captions check passed (no swallowed word) · −14 LUFS.
+
 ## reel_lib.py (scripts/)
 ```python
 import sys; sys.path.insert(0, "<this skill dir>/scripts"); from reel_lib import *
@@ -295,6 +345,14 @@ Worked examples: `scripts/voiceover_build_example.py`, `scripts/no_voice_build_e
 - **One ask:** if the user keeps a spoken "follow for more", that is the ask: drop any on-screen send line.
 - **Pick sounds, don't flood them:** `sfx_cues.py` can list 40+ cues; use about half (whoosh on page cuts, pop on payoff
   words, a tick on screenshots). Too many sounds feel cheap.
+- **Edits caches media by path.** Overwriting `motion.mov` with a new render leaves the old length (frames past it go
+  blank, status `failedToLoadTracksFromURLMediaNode`): import every re-render under a NEW name (`motion-v2.mov`).
+  Deleting an overlay can also stretch the music clip to the song's end: re-read `elements` and trim the music back.
+- **Per-reel CSS must not reuse engine class names** (`.bar`, `.dots`, `.count`, `.meter`, `.press`, `.type`, `.strike`):
+  engine.js animates them by class, and a `.bar` without a `.fill` child crashes the render
+  ("Cannot read properties of null (reading 'style')").
+- **Soft words get cut as pauses.** The −40 dB pause finder can swallow a quietly said word; always run the captions check
+  after the cut and compare it with the transcript.
 - `seek` can fail ("playhead did not reach"): `addSoundEffect` then lands at the old playhead, so always `move` the sound
   to the cue time explicitly.
 

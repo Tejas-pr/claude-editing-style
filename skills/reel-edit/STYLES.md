@@ -3,8 +3,8 @@
 Every style has a number AND a name; both work everywhere (`template("folio")`, `/editing-style:folio`).
 
 At the start of EVERY edit, `/editing-style:edit` (or the reel-edit skill) asks the user in the AskUserQuestion dialog:
-**1. edit style** (style-01 … style-07) · **2. caption style** + size · **3. face cam or voiceover** · **4. topic / sources to
-screenshot** · **5. target length**. Never assume last reel's answers. Show the preview PNGs below if they want to see them. Users add their own styles as style-08, style-09 … with `/editing-style:build` (stored in `reel-library/`).
+**1. edit style** (style-01 … style-08) · **2. caption style** + size · **3. face cam or voiceover** · **4. topic / sources to
+screenshot** · **5. target length**. Never assume last reel's answers. Show the preview PNGs below if they want to see them. Users add their own styles as style-09, style-10 … with `/editing-style:build` (stored in `reel-library/`).
 `reel_lib.STYLES[id]` → (template, default captions); `template("style-04")` gives the template path.
 
 | id | name | template | default captions | face | best for | preview |
@@ -16,6 +16,7 @@ screenshot** · **5. target length**. Never assume last reel's answers. Show the
 | **style-05** | **Echo** · paper subtitles | `paper.html` | `pop-serif` + `.sub` lines | wide card on top (or full) | faster talking reels: one subtitle line under the media, keyword in a yellow box | `styles/style-05.png` |
 | **style-06** | **Skit** · funny skit / re-acted sound | none (`scripts/skit_sync.py`) | the reference's title + emoji reactions (🤡 😭) | the take itself, full screen, with 2x close-up punch-ins | POV skits and lip-sync memes on a trending sound: your take timed to the sound piece by piece | `styles/style-06.png` |
 | **style-07** | **Board** · 16:9 moving card | `board169.html` (`scripts/board_build.py` + a spec.json) | `pop-serif` headline (all 5 work) | the footage ALWAYS on screen as a white-framed card that moves: big (talking) · chaos (+ notification pile) · corner (screens fill the frame) · side (comment card) · end | landscape (YouTube, LinkedIn, X, website) promos, product demos, two-person skits about a product: real app / site screens with zoom-to-highlight, hook sticker, brand sting, end card | `styles/style-07.png` |
+| **style-08** | **Series** · information-video-red | `story.html` + `templates/info-red/` (`scripts/info_red.py`) | `pop-serif` one-word chest captions, keyword red italic | full screen the whole time (blur pages use `face-cut.mp4`) | **educational SERIES** ("Part n of N"): red series chip on every page, colour step cards (letter-by-letter acronyms, numbered steps tied to one running example), blur pages for the big lines, roadmap dots, open loop into the next part, **cover page = last 0.5 s** + cover PNG | `styles/style-08.png` |
 
 ## Caption styles (ask together with the edit style)
 | id | name | where it shows | size default (smaller · bigger) |
@@ -43,6 +44,7 @@ screenshot** · **5. target length**. Never assume last reel's answers. Show the
 - **style-07**: local render, no Edits needed. `local_cut.py RAW reels/<slug> --size 1920x1080 --gop 1` → spec.json
   (brand, pages, subs, screens …; `scripts/board_spec_example.json`) → `board_build.py spec.json reels/<slug>` →
   `W=1920 H=1080 local_render.sh motion.html face-cut.mp4 final.mp4 [music] [vol] [sfx_dir]`. Full recipe: SKILL.md "style-07 Board".
+- **style-08**: `from info_red import Reel` → `R = Reel(HERE, W, series, part, parts, speech_end)`; pages with `R.scene("story"|"card ink"|"card cream"|"card", a, b, body)`, `R.blur()`, `R.S()` chest captions, `R.STK()` stickers, `R.STEP()` step cards, `R.road()`, `R.next_part()`, `R.cover()` then `R.build()`. Shared CSS / stickers / cover: `templates/info-red/`. Runnable example: `scripts/info_red_example.py`. Full recipe: SKILL.md "style-08 Series".
 
 ## Edits recipe for the moving face card (style-04/05), verified
 1. Render `motion.mov --alpha`; it prints every face-window change `time {x,y,w,h}` (null = hidden).

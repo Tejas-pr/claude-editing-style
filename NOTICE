@@ -3,8 +3,11 @@ Copyright 2026 Tejas (https://github.com/Tejas-pr)
 Original repository: https://github.com/Tejas-pr/claude-editing-style
 
 This product includes the "editing-style" Claude Code plugin created by Tejas: the numbered video styles
-(style-01 … style-05), caption styles (cap-01 … cap-05), the motion engine (engine.js, components.css), the
+(style-01 … style-08), caption styles (cap-01 … cap-05), the motion engine (engine.js, components.css), the
 templates, the scripts and the reel library format.
 
 Under the Apache License 2.0 (section 4), any redistribution or derivative work (forks, copies, modified
 versions) MUST keep this NOTICE file and the attribution "Created by Tejas — https://github.com/Tejas-pr/claude-editing-style".
+
+Third-party: the stickers in skills/reel-edit/templates/info-red/stickers/ are Phosphor Icons (duotone, v2.1.1),
+Copyright (c) 2023 Phosphor Icons, MIT License — https://github.com/phosphor-icons/core
